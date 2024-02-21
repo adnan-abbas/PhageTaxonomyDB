@@ -9,6 +9,6 @@ app.register_error_handler(404, page_not_found)
 def index():
     return render_template('index.html', **locals())
 
-
+#main method
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port='8888', debug=True)
