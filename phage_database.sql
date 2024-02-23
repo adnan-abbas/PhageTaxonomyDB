@@ -19,10 +19,10 @@
 -- Table structure for table `bacterial host`
 --
 
-DROP TABLE IF EXISTS `bacterial host`;
+DROP TABLE IF EXISTS `bacterial_host`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `bacterial host` (
+CREATE TABLE `bacterial_host` (
   `BacteriaID` varchar(45) NOT NULL,
   `Name` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`BacteriaID`)
@@ -30,12 +30,12 @@ CREATE TABLE `bacterial host` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `bacterial host`
+-- Dumping data for table `bacterial_host`
 --
 
 LOCK TABLES `bacterial host` WRITE;
-/*!40000 ALTER TABLE `bacterial host` DISABLE KEYS */;
-/*!40000 ALTER TABLE `bacterial host` ENABLE KEYS */;
+/*!40000 ALTER TABLE `bacterial_host` DISABLE KEYS */;
+/*!40000 ALTER TABLE `bacterial_host` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -146,13 +146,13 @@ INSERT INTO `genome` VALUES (123456,56,NULL,NULL,NULL,NULL,NULL),(234543,32,NULL
 UNLOCK TABLES;
 
 --
--- Table structure for table `species attacks`
+-- Table structure for table `species_attacks`
 --
 
-DROP TABLE IF EXISTS `species attacks`;
+DROP TABLE IF EXISTS `species_attacks`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `species attacks` (
+CREATE TABLE `species_attacks` (
   `Species` varchar(45) NOT NULL,
   `BacteriaID` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`Species`)
@@ -160,12 +160,12 @@ CREATE TABLE `species attacks` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `species attacks`
+-- Dumping data for table `species_attacks`
 --
 
-LOCK TABLES `species attacks` WRITE;
-/*!40000 ALTER TABLE `species attacks` DISABLE KEYS */;
-/*!40000 ALTER TABLE `species attacks` ENABLE KEYS */;
+LOCK TABLES `species_attacks` WRITE;
+/*!40000 ALTER TABLE `species_attacks` DISABLE KEYS */;
+/*!40000 ALTER TABLE `species_attacks` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
