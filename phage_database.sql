@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS `bacterial_host`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `bacterial_host` (
-  `BacteriaID` varchar(45) NOT NULL,
+  `BacteriaID` int NOT NULL,
   `Name` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`BacteriaID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -124,12 +124,11 @@ DROP TABLE IF EXISTS `genome`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `genome` (
-  `AccessionID` int NOT NULL,
+  `AccessionID` varchar(20) NOT NULL,
   `Length` int DEFAULT NULL,
-  `Jumbo Phage` varchar(3) DEFAULT NULL,
   `Species` varchar(45) DEFAULT NULL,
   `Description` longtext,
-  `Modification Date` date DEFAULT NULL,
+  `Modification Date` longtext,
   `Sequence` longtext,
   PRIMARY KEY (`AccessionID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -141,7 +140,7 @@ CREATE TABLE `genome` (
 
 LOCK TABLES `genome` WRITE;
 /*!40000 ALTER TABLE `genome` DISABLE KEYS */;
-INSERT INTO `genome` VALUES (123456,56,NULL,NULL,NULL,NULL,NULL),(234543,32,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `genome` VALUES ('123456',56,NULL,NULL,NULL,NULL),('234543',32,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `genome` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -202,4 +201,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-02-23 12:44:25
+-- Dump completed on 2024-02-23 13:07:28
