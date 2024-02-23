@@ -176,9 +176,9 @@ DROP TABLE IF EXISTS `taxonomy`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `taxonomy` (
   `Species` varchar(45) NOT NULL,
-  `Order` varchar(45) DEFAULT NULL,
   `Family` varchar(45) DEFAULT NULL,
   `Genus` varchar(45) DEFAULT NULL,
+  `Orders` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`Species`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -201,4 +201,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-02-23 13:07:28
+-- Dump completed on 2024-02-23 13:23:54
