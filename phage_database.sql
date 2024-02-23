@@ -1,6 +1,6 @@
--- MySQL dump 10.13  Distrib 8.0.27, for macos11 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
 --
--- Host: localhost    Database: ptdb
+-- Host: localhost    Database: phage_database
 -- ------------------------------------------------------
 -- Server version	8.3.0
 
@@ -14,6 +14,29 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `bacterial host`
+--
+
+DROP TABLE IF EXISTS `bacterial host`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `bacterial host` (
+  `BacteriaID` int NOT NULL,
+  `Name` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`BacteriaID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `bacterial host`
+--
+
+LOCK TABLES `bacterial host` WRITE;
+/*!40000 ALTER TABLE `bacterial host` DISABLE KEYS */;
+/*!40000 ALTER TABLE `bacterial host` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `bacterial_host`
@@ -94,7 +117,7 @@ DROP TABLE IF EXISTS `features`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `features` (
-  `AccessionID` int NOT NULL,
+  `AccessionID` varchar(20) NOT NULL,
   `%Coding Capacity%` int DEFAULT NULL,
   `#CDS` int DEFAULT NULL,
   `Classification` blob,
@@ -103,7 +126,8 @@ CREATE TABLE `features` (
   `%molGC` int DEFAULT NULL,
   `#tRNA` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`AccessionID`),
-  UNIQUE KEY `idFeatures_UNIQUE` (`AccessionID`)
+  UNIQUE KEY `idFeatures_UNIQUE` (`AccessionID`),
+  CONSTRAINT `features_ibfk_1` FOREIGN KEY (`AccessionID`) REFERENCES `genome` (`AccessionID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -145,6 +169,29 @@ INSERT INTO `genome` VALUES ('123456',56,NULL,NULL,NULL,NULL),('234543',32,NULL,
 UNLOCK TABLES;
 
 --
+-- Table structure for table `species attacks`
+--
+
+DROP TABLE IF EXISTS `species attacks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `species attacks` (
+  `Species` varchar(45) NOT NULL,
+  `BacteriaID` int NOT NULL,
+  PRIMARY KEY (`Species`,`BacteriaID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `species attacks`
+--
+
+LOCK TABLES `species attacks` WRITE;
+/*!40000 ALTER TABLE `species attacks` DISABLE KEYS */;
+/*!40000 ALTER TABLE `species attacks` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `species_attacks`
 --
 
@@ -153,8 +200,11 @@ DROP TABLE IF EXISTS `species_attacks`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `species_attacks` (
   `Species` varchar(45) NOT NULL,
-  `BacteriaID` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`Species`)
+  `BacteriaID` int NOT NULL,
+  PRIMARY KEY (`Species`,`BacteriaID`),
+  KEY `species_attacks_ibfk_2_idx` (`BacteriaID`),
+  CONSTRAINT `species_attacks_ibfk_1` FOREIGN KEY (`Species`) REFERENCES `taxonomy` (`Species`),
+  CONSTRAINT `species_attacks_ibfk_2` FOREIGN KEY (`BacteriaID`) REFERENCES `bacterial_host` (`BacteriaID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -179,7 +229,10 @@ CREATE TABLE `taxonomy` (
   `Family` varchar(45) DEFAULT NULL,
   `Genus` varchar(45) DEFAULT NULL,
   `Orders` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`Species`)
+  `AccessionID` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`Species`),
+  KEY `AccessionID` (`AccessionID`),
+  CONSTRAINT `taxonomy_ibfk_1` FOREIGN KEY (`AccessionID`) REFERENCES `genome` (`AccessionID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -201,4 +254,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-02-23 13:23:54
+-- Dump completed on 2024-02-23 14:01:00
