@@ -33,7 +33,7 @@ CREATE TABLE `bacterial_host` (
 -- Dumping data for table `bacterial_host`
 --
 
-LOCK TABLES `bacterial host` WRITE;
+LOCK TABLES `bacterial_host` WRITE;
 /*!40000 ALTER TABLE `bacterial_host` DISABLE KEYS */;
 /*!40000 ALTER TABLE `bacterial_host` ENABLE KEYS */;
 UNLOCK TABLES;
