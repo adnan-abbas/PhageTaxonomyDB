@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<body class="bg-white text-black">
+    {% extends "layout.html" %}
+    <!-- Begin page content -->
+    {% block content %}
+
+    <main class="flex-shrink-0">
+
+        <div class="container">
+          <h1 id="emojify" title=""  style="position: absolute; top: 10px; right: 20px;"></h1>
+            <h1 class="text-center mt-5">Data Manipulation &#x2699;</h1>
+        </div>  
+
+         <div class="d-flex h-100 p-3 mx-auto flex-column">
+          <header>
+            
+              <nav class="nav justify-content-center ">
+                <p class="lead mt-4" style="margin: 0 auto;
+                margin-top: 1rem;
+                padding: 1rem 2rem;">
+                    <a href="{{ url_for('insert_data') }}" class="btn btn-secondary btn-lg">Insert Data</a>
+                    <a href="" class="btn btn-secondary btn-lg">Update Data</a>
+                    <a href="" class="btn btn-secondary btn-lg">Delete Data</a>
+                </p>
+                <span class="border border-dark rounded mt-5 p-3 w-75  margin: 0 auto;
+                padding: 1rem;">
+                  This Data Manipulation page allows you to perform insert, delete, update operations on the database.
+              <ul></ul>
+                  <ul>
+                      <li>
+                        Insert Data: You can insert the phage genome data by clicking here.
+                      </li>
+                      <li>
+                        Update Data: You can update existing data in the database by clicking here.
+                      </li>
+                      <li>
+                        Delete Data: You can delete the phage genome entries from the database by clicking here.
+                      </li>
+                    </ul>
+                 
+
+                </span>
+              </nav>
+
+          </header>
+        </div>    
+        
+    </main>
+ 
+    {% endblock %}
+</body>
