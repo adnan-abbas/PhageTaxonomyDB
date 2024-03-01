@@ -24,65 +24,64 @@
                     <input type="text" name="accession_id" class="form-control" id="accession-id" required>
                 </div>
                 <div class="form-group">
-                    <label for="genome-sequence">Genome Sequence</label>
-                    <textarea name="genome_sequence" class="form-control" id="genome-sequence" required></textarea>
+                    <label for="species">Species</label>
+                    <input type="text" name="species" class="form-control" id="species" required>
                 </div>
                 <div class="form-group">
-                    <label for="modification-data">Modification Date</label>
-                    <input type="text" name="modification_data" class="form-control" id="modification-data" required>
+                    <label for="family">Family</label>
+                    <input type="text" name="family" class="form-control" id="family" required>
                 </div>
                 <div class="form-group">
-                    <label>Is it a Jumbophage?</label>
-                    <div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="jumbophage" id="jumbophage-yes" value="yes" required>
-                            <label class="form-check-label" for="jumbophage-yes">Yes</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="jumbophage" id="jumbophage-no" value="no" required>
-                            <label class="form-check-label" for="jumbophage-no">No</label>
-                        </div>
-                    </div>
-                </div>
-                <!-- Add more fields here as needed -->
-                <div class="form-group">
-                    <label for="accession-id">Accession ID</label>
-                    <input type="text" name="accession_id" class="form-control" id="accession-id" required>
+                    <label for="genus">Genus</label>
+                    <input type="text" name="genus" class="form-control" id="genus" required>
                 </div>
                 <div class="form-group">
-                    <label for="genome-sequence">Genome Sequence</label>
-                    <textarea name="genome_sequence" class="form-control" id="genome-sequence" required></textarea>
+                    <label for="orders">Order</label>
+                    <input type="text" name="orders" class="form-control" id="orders" required>
                 </div>
                 <div class="form-group">
-                    <label for="modification-data">Modification Date</label>
-                    <input type="text" name="modification_data" class="form-control" id="modification-data" required>
+                    <label for="genome-length">Genome Length</label>
+                    <input type="number" name="genome_length" class="form-control" id="genome-length" required>
                 </div>
                 <div class="form-group">
-                    <label for="accession-id">Accession ID</label>
-                    <input type="text" name="accession_id" class="form-control" id="accession-id" required>
+                    <label for="modification-date">Modification Date</label>
+                    <input type="date" name="modification_date" class="form-control" id="modification-date" required>
                 </div>
                 <div class="form-group">
-                    <label for="genome-sequence">Genome Sequence</label>
-                    <textarea name="genome_sequence" class="form-control" id="genome-sequence" required></textarea>
+                    <label for="sequence">Sequence</label>
+                    <textarea name="sequence" class="form-control" id="sequence" required></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="modification-data">Modification Date</label>
-                    <input type="text" name="modification_data" class="form-control" id="modification-data" required>
+                    <label for="classification">Classification</label>
+                    <input type="text" name="classification" class="form-control" id="classification" required>                
                 </div>
-
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary">Submit Data</button>
+                    <label for="mol-gc">molGC (%)</label>
+                    <input type="number" name="mol_gc" class="form-control" id="mol-gc" step="0.01" required>
                 </div>
-            </form>
-
-
-            <!-- <div class="input-group mb-3">
-                <textarea type="text" class="form-control" id="chat-input" style="font-size: 20px; resize: none;"></textarea>
-            </div>
-            <div class="input-group mb-3">
-                <div class="input-group-append">
-                    <button id="submit-button" class="btn btn-primary" data-loading-text="Loading...">Insert Data</button>
-            </div> -->
+                <div class="form-group">
+                    <label for="negative-strand">Negative Strand (%)</label>
+                    <input type="number" name="negative_strand" class="form-control" id="negative-strand" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="number-cds">Number of CDS</label>
+                    <input type="number" name="number_cds" class="form-control" id="number-cds" required>
+                </div>
+                <div class="form-group">
+                    <label for="positive-strand">Positive Strand (%)</label>
+                    <input type="number" name="positive_strand" class="form-control" id="positive-strand" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="trnas">tRNAs</label>
+                    <input type="number" name="trnas" class="form-control" id="trnas" required>
+                </div>
+                <div class="form-group">
+                    <label for="host">Bacterial Host</label>
+                    <input type="text" name="host" class="form-control" id="host" required>
+                </div>
+                <br>
+                </br>
+                <button type="submit" class="btn btn-primary">Submit Data</button>
         </div>
     </main>
 
@@ -90,9 +89,42 @@
         $(document).ready(function() {
             $('#insert-form').submit(function(e) {
                 e.preventDefault(); // Prevent the form from submitting normally
+                function formatDate(dateString) {
+                    var date = new Date(dateString);
+                    var year = date.getFullYear();
+                    var month = ('0' + (date.getMonth() + 1)).slice(-2);
+                    var day = ('0' + date.getDate()).slice(-2);
+                    return year + '-' + month + '-' + day;
+                }
 
-                // You can add AJAX code here to submit the form data asynchronously
-                // For simplicity, this example does not include AJAX functionality
+                var formData = {
+                    'accession_id': $('#accession-id').val(),
+                    'species': $('#species').val(),
+                    'family': $('#family').val(),
+                    'genus': $('#genus').val(),
+                    'orders': $('#orders').val(),
+                    'genome_length': $('#genome-length').val(),
+                    'modification_date': formatDate($('#modification-date').val()),
+                    'sequence': $('#sequence').val(),
+                    'classification': $('#classification').val(),
+                    'mol_gc': $('#mol-gc').val(),
+                    'negative_strand': $('#negative-strand').val(),
+                    'number_cds': $('#number-cds').val(),
+                    'positive_strand': $('#positive-strand').val(),
+                    'trnas': $('#trnas').val(),
+                    'host': $('#host').val()
+
+                };
+                $.ajax({
+                type: "POST",
+                url: "/insert",
+                data: formData,
+                success: function (data) {
+                    
+                    //provide a scrollable modal here to verify if this is what the user wants to add
+
+                }
+            });
             });
         });
     </script>
@@ -101,5 +133,19 @@
 
 </html>
 
-
+<!-- 'accession_id': something,
+'genome_length': something,
+'modification_date': something,
+'sequence': something, 
+'species': something,
+'family':something,
+'genus':something,
+'orders':something,
+'classification':something,
+'mol_gc':something,
+'neg_strand':something,
+'num_CDS':something,
+'pos_strand':something,
+'tRNAs':something,
+'host':something, -->
 {% endblock %}
