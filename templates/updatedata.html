@@ -16,64 +16,64 @@
     {% block content %}
     <main class="flex-shrink-0">
         <div class="container">
-            <h1 class="mt-5">Insert Data  &#x25B4;</h1>
-            <p class="lead"> Insert the phage genome data below:</p>
-            <form id="insert-form" method="POST" action="/submit-data">
+            <h1 class="mt-5">Update Data  &#x25B4; {{ accession_id }} </h1>
+            <p class="lead"> Update the phage genome data below:</p>
+            <form id="insert-form" method="POST" action="/update_data">
                 <div class="form-group">
-                    <label for="accession-id">Accession ID</label>
-                    <input type="text" name="accession_id" class="form-control" id="accession-id" required>
+                    <label for="accession_id">Accession ID</label>
+                    <input type="hidden" name="accession_id" class="form-control" id="accession_id" value = "{{ accession_id }}"required>
                 </div>
                 <div class="form-group">
                     <label for="species">Species</label>
-                    <input type="text" name="species" class="form-control" id="species" required>
+                    <input type="text" name="species" class="form-control" id="species" value = "{{ species }}"required>
                 </div>
                 <div class="form-group">
                     <label for="family">Family</label>
-                    <input type="text" name="family" class="form-control" id="family" required>
+                    <input type="text" name="family" class="form-control" id="family" value = "{{ family }}" required>
                 </div>
                 <div class="form-group">
                     <label for="genus">Genus</label>
-                    <input type="text" name="genus" class="form-control" id="genus" required>
+                    <input type="text" name="genus" class="form-control" id="genus" value = "{{ genus }}" required>
                 </div>
                 <div class="form-group">
                     <label for="orders">Order</label>
-                    <input type="text" name="orders" class="form-control" id="orders" required>
+                    <input type="text" name="orders" class="form-control" id="orders" value = "{{ orders }}" required>
                 </div>
                 <div class="form-group">
                     <label for="genome-length">Genome Length</label>
-                    <input type="number" name="genome_length" class="form-control" id="genome-length" required>
+                    <input type="number" name="genome_length" class="form-control" id="genome-length" value = "{{ genome_length }}" required>
                 </div>
                 <div class="form-group">
                     <label for="modification-date">Modification Date</label>
-                    <input type="date" name="modification_date" class="form-control" id="modification-date" required>
+                    <input type="date" name="modification_date" class="form-control" id="modification-date" value = "{{ modification_date }}" required>
                 </div>
                 <div class="form-group">
                     <label for="sequence">Sequence</label>
-                    <textarea name="sequence" class="form-control" id="sequence" required></textarea>
+                    <textarea name="sequence" class="form-control" id="sequence" value = "{{ sequence }}" required></textarea>
                 </div>
                 <div class="form-group">
                     <label for="classification">Classification</label>
-                    <input type="text" name="classification" class="form-control" id="classification" required>                
+                    <input type="text" name="classification" class="form-control" id="classification" value = "{{ classification }}" required>                
                 </div>
                 <div class="form-group">
                     <label for="mol-gc">molGC (%)</label>
-                    <input type="number" name="mol_gc" class="form-control" id="mol-gc" step="0.01" required>
+                    <input type="number" name="mol_gc" class="form-control" id="mol-gc" step="0.01" value = "{{ mol_gc }}" required>
                 </div>
                 <div class="form-group">
                     <label for="negative-strand">Negative Strand (%)</label>
-                    <input type="number" name="negative_strand" class="form-control" id="negative-strand" step="0.01" required>
+                    <input type="number" name="negative_strand" class="form-control" id="negative-strand" step="0.01" value = "{{ negative_strand }}" required>
                 </div>
                 <div class="form-group">
                     <label for="number-cds">Number of CDS</label>
-                    <input type="number" name="number_cds" class="form-control" id="number-cds" required>
+                    <input type="number" name="number_cds" class="form-control" id="number-cds" value = "{{ number_cds }}" required>
                 </div>
                 <div class="form-group">
                     <label for="positive-strand">Positive Strand (%)</label>
-                    <input type="number" name="positive_strand" class="form-control" id="positive-strand" step="0.01" required>
+                    <input type="number" name="positive_strand" class="form-control" id="positive-strand" step="0.01" value = "{{ positive_strand }}" required>
                 </div>
                 <div class="form-group">
                     <label for="trnas">tRNAs</label>
-                    <input type="number" name="trnas" class="form-control" id="trnas" required>
+                    <input type="number" name="trnas" class="form-control" id="trnas" value = "{{ trnas }}" required>
                 </div>
                 <div class="form-group">
                     <label for="host">Bacterial Host</label>
@@ -98,7 +98,7 @@
                 }
 
                 var formData = {
-                    'accession_id': $('#accession-id').val(),
+                    'accession_id': $('#accession_id').val(),
                     'species': $('#species').val(),
                     'family': $('#family').val(),
                     'genus': $('#genus').val(),
@@ -117,10 +117,11 @@
                 };
                 $.ajax({
                 type: "POST",
-                url: "/insert",
+                url: "/update_data",
                 data: formData,
                 success: function (data) {
                     window.location.href = '/';
+                    
                     //provide a scrollable modal here to verify if this is what the user wants to add
 
                 }

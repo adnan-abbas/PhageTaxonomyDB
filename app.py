@@ -13,61 +13,117 @@ app.config['MYSQL_DB'] = config_data['mysql_db']
 
 
 mysql = MySQL(app)
-
-
-
-def get_genomes(user_id):
-    conn = mysql.connection
-    try:
-        with conn.cursor() as cursor:
-            query = 'SELECT * FROM post WHERE user_id = %s'
-            cursor.execute(query, (user_id,))
-            user_posts = cursor.fetchall()
-
-            posts_list = []
-            for post in user_posts:
-                #print(post)
-                post_data = {
-                    'post_id': post[0],
-                    'user_id': post[1],
-                    'timestamp': post[2],
-                    'content': Fernet(session[current_user.name]["key"]).decrypt(post[3]).decode('utf-8'),
-                    'summary': Fernet(session[current_user.name]["key"]).decrypt(post[4]).decode('utf-8'),
-                    'lstm': Fernet(session[current_user.name]["key"]).decrypt(post[5]).decode('utf-8'),
-                    'free': post[6],
-                    'character_count': post[7],
-                    'ai_requests': post[8],
-                    'sentiment': post[9],
-                    'futurequestion': post[10],
-                    # Include other post attributes as needed
-                }
-                posts_list.append(post_data)
-
-            return posts_list
-    finally:
-        conn.close()
-
-
-
+ 
 @app.route('/', methods = ['POST', 'GET'])
 def index():
-
     return render_template('index.html', **locals())
+
+
+@app.route('/update_data', methods = ['POST', 'GET'])
+def update_data():
+    if request.method == 'POST':
+        accession_id = request.form['accession_id']
+        genome_sequence = request.form['sequence']
+        modification_date = request.form['modification_date']
+        species = request.form['species']
+        family = request.form['family']
+        genus = request.form['genus']
+        orders = request.form['orders']
+        genome_length = request.form['genome_length']
+        classification = request.form['classification']
+        mol_gc = request.form['mol_gc']
+        negative_strand = request.form['negative_strand']
+        number_cds = request.form['number_cds']
+        positive_strand = request.form['positive_strand']
+        trnas = request.form['trnas']
+        host = request.form['host']
+        sql = "UPDATE features SET Classification = %s WHERE Accession = %s"
+        val = (classification, accession_id)
+        cur = mysql.connection.cursor()
+        cur.execute(sql, val)
+        mysql.connection.commit()
+        cur.close()
+    return render_template('index.html', **locals())
+
+
+@app.route('/update', methods = ['POST','GET'])
+def update():
+    if request.method == 'POST':
+        accession_id = request.form['accession_id']
+        cur = mysql.connection.cursor()
+        sql_features = "SELECT * FROM features WHERE Accession = %s"
+        cur.execute(sql_features, [accession_id])
+        data_features = cur.fetchall()
+        classification = data_features[0][1]
+        mol_gc = data_features[0][2]
+        number_cds = data_features[0][3]
+        positive_strand = data_features[0][4]
+        negative_strand = data_features[0][5]
+        trnas = data_features[0][6]
+
+
+        sql_genome = "SELECT * FROM genome WHERE Accession = %s"
+        cur.execute(sql_genome, [accession_id])
+        data_genome = cur.fetchall()
+        species = data_genome[0][1]
+        genome_length = data_genome[0][2]
+        modification_date = data_genome[0][3]
+        sequence = data_genome[0][4]
+        print(sequence)
+
+
+        sql_taxonomy = "SELECT * FROM taxonomy WHERE Species = %s"
+        cur.execute(sql_taxonomy, [species])
+        data_taxon = cur.fetchall()
+        orders = data_taxon[0][1]
+        family = data_taxon[0][2]
+        genus = data_taxon[0][3]
+
+        # sql_host = "SELECT * FROM host WHERE Host = %s"
+        # cur.execute(sql_host, [accession_id])
+        # data_genome = cur.fetchall()
+        # species = data_genome[0][1]
+        # genome_length = data_genome[0][2]
+        # modification_date = data_genome[0][3]
+     
+        cur.close()
+    return render_template('updatedata.html',accession_id = accession_id, classification = classification, mol_gc = mol_gc, number_cds = number_cds, positive_strand = positive_strand, negative_strand= negative_strand,
+    trnas = trnas, species =species, genome_length = genome_length, modification_date =modification_date, orders = orders, family = family, genus = genus, sequence = sequence  )  # Pass any necessary data
+
+    
+   # return render_template('updatedata.html')
+
 
 
 @app.route('/view', methods = ['POST', 'GET'])
 def view():
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM genome")
-    data = cur.fetchall()
-    cur.close()
-    return render_template('viewdata.html',phages=data, **locals())
+    if request.method == 'POST':
+        operation = request.form['operation']
+        accession_id = request.form['accession_id']
+        #print(request.form)
+        if (operation == 'delete'):
+            cur = mysql.connection.cursor()
+            sql_features = "DELETE FROM features WHERE Accession = %s"
+            cur.execute(sql_features, [accession_id])
+            sql_genome = "DELETE FROM genome WHERE Accession = %s"
+            cur.execute(sql_genome, [accession_id])
+            mysql.connection.commit()
+            cur.close()
+        return render_template('index.html')
+
+    else:
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * FROM genome")
+        data = cur.fetchall()
+        cur.close()
+        
+        return render_template('viewdata.html',phages=data)
 
 
 
 @app.route('/contribute', methods = ['POST', 'GET'])
 def contribute_data():
-    return render_template('contributedata.html', **locals())
+    return render_template('contributedata.html')
 
 
 @app.route('/insert', methods = ['POST', 'GET'])
@@ -89,12 +145,16 @@ def insert_data():
         positive_strand = request.form['positive_strand']
         trnas = request.form['trnas']
         host = request.form['host']
-
+        
+        insert_in_taxonomy(species, orders, family, genus)
         insert_in_genome(accession_id,species, genome_length, modification_date, genome_sequence)
         insert_in_features(accession_id, classification, mol_gc, number_cds,positive_strand,negative_strand,trnas)
-        
+        insert_in_host(host)
 
-    return render_template('insertdata.html', **locals())
+
+    return render_template('insertdata.html')
+
+
 
 def insert_in_genome(accession, species, genome_length, modification_date, sequence):
     print("inserting in genome table")
@@ -106,6 +166,36 @@ def insert_in_genome(accession, species, genome_length, modification_date, seque
 
 def insert_in_features(accession, classification, mol_gc, number_cds, positive_strand, negative_strand, trnas):
     print("inserting in features")
+    cur = mysql.connection.cursor()
+    cur.execute("INSERT INTO features VALUES (%s, %s, %s, %s,%s, %s, %s)", (accession, classification, mol_gc,  number_cds, positive_strand, negative_strand, trnas))
+    mysql.connection.commit()
+    cur.close()
+
+def insert_in_taxonomy(species, orders, family, genus):
+    print("inserting in taxonomy table")
+    cur = mysql.connection.cursor()
+    cur.execute("INSERT INTO taxonomy VALUES (%s, %s, %s, %s)", (species, orders, family, genus))
+    mysql.connection.commit()
+    cur.close()
+
+def insert_in_host(host):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM host")
+    data = cur.fetchall()
+    host_exists_already = False
+    for (host_name, id) in data:
+        if host_name == host:
+            host_exists_already = True
+
+    if (not host_exists_already):
+        bact_id = len(data) + 1
+        cur.execute("INSERT INTO host VALUES (%s, %s)", (host, bact_id))
+
+    cur.close()
+        
+
+
+    
 
 
 
