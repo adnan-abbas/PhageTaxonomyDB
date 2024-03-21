@@ -1,6 +1,9 @@
 from flask import Flask, render_template, jsonify, request, flash, redirect, url_for, session
 from flask_mysqldb import MySQL
 import json
+from flask import Response, make_response
+import urllib.request
+
 
 app = Flask(__name__)
 with open('db.json') as config_file:
@@ -16,7 +19,13 @@ mysql = MySQL(app)
  
 @app.route('/', methods = ['POST', 'GET'])
 def index():
-    return render_template('index.html', **locals())
+    cur = mysql.connection.cursor()
+    # Assuming your genome table is called 'genome' and you want the first 12 entries
+    cur.execute("SELECT * FROM genome LIMIT 12")
+    genomes = cur.fetchall()
+    cur.close()
+    return render_template('index.html', genomes=genomes)
+    # return render_template('index.html', **locals())
 
 
 @app.route('/update_data', methods = ['POST', 'GET'])
@@ -192,12 +201,7 @@ def insert_in_host(host):
         cur.execute("INSERT INTO host VALUES (%s, %s)", (host, bact_id))
 
     cur.close()
-        
-
-
-    
-
-
+ 
 
 #main method
 if __name__ == '__main__':

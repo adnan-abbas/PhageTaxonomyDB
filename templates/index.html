@@ -1,15 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<body>
     {% extends "layout.html" %}
-    <!-- Begin page content -->
     {% block content %}
+    <!-- Begin page content -->
+    <main role="main" class="container">
+        <h1 class="mt-5">Phage Genomes</h1>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Accession ID</th>
+                    <th>Species</th>
+                    <th>Genome Length</th>
+                    <th>Modification Date</th>
+                    <!-- <th>Sequence</th> -->
+                    <th>Fasta</th>
+                    <!-- Add other columns as needed -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for genome in genomes %}
+                <tr>
+                    <td>{{ genome[0] }}</td> <!-- Replace 0,1,2, etc. with the correct index based on your table structure -->
+                    <td>{{ genome[1] }}</td>
+                    <td>{{ genome[2] }}</td>
+                    <td>{{ genome[3] }}</td>
+                    <td>
+                        <!-- Call the JavaScript function with the correct accession ID -->
+                        <!-- Use an anchor tag but style it as a button -->
+                    <a href="https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&report=fasta&id={{ genome[0] }}" class="btn btn-primary" target="_blank" download="{{ genome[0] }}.fasta">Download FASTA</a>
+                    <!-- Add other cells as needed -->
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </main>
 
-    {{ data }}
-</body>
+    {% endblock %}
+    
 
-
-
-
-{% endblock %}
+        
