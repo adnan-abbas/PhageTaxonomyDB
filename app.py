@@ -24,10 +24,10 @@ def index():
 
     if search_query:
         # Modify this SQL query based on your database schema and what you want to search for
-        query = "SELECT * FROM genome WHERE species LIKE %s LIMIT 12"
+        query = "SELECT * FROM genome WHERE species LIKE %s LIMIT 10"
         cur.execute(query, ('%' + search_query + '%',))
     else:
-        cur.execute("SELECT * FROM genome LIMIT 12")
+        cur.execute("SELECT * FROM genome LIMIT 10")
     
     genomes = cur.fetchall()
     cur.close()
