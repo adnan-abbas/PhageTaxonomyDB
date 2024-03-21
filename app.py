@@ -19,13 +19,20 @@ mysql = MySQL(app)
  
 @app.route('/', methods = ['POST', 'GET'])
 def index():
+    search_query = request.args.get('search_query', '')  # Get the search term from the query parameters
     cur = mysql.connection.cursor()
-    # Assuming your genome table is called 'genome' and you want the first 12 entries
-    cur.execute("SELECT * FROM genome LIMIT 12")
+
+    if search_query:
+        # Modify this SQL query based on your database schema and what you want to search for
+        query = "SELECT * FROM genome WHERE species LIKE %s LIMIT 12"
+        cur.execute(query, ('%' + search_query + '%',))
+    else:
+        cur.execute("SELECT * FROM genome LIMIT 12")
+    
     genomes = cur.fetchall()
     cur.close()
     return render_template('index.html', genomes=genomes)
-    # return render_template('index.html', **locals())
+
 
 
 @app.route('/update_data', methods = ['POST', 'GET'])

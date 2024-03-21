@@ -5,6 +5,16 @@
     <!-- Begin page content -->
     <main role="main" class="container">
         <h1 class="mt-5">Phage Genomes</h1>
+
+          <!-- Search form -->
+    <form action="/" method="get">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Search genomes..." name="search_query" value="{{ request.args.get('search_query', '') }}">
+            <button class="btn btn-outline-secondary" type="submit">Search</button>
+        </div>
+    </form>
+
+    <!-- Table goes here -->
         <table class="table table-bordered">
             <thead>
                 <tr>
