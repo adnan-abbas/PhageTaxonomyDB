@@ -17,20 +17,45 @@ app.config['MYSQL_DB'] = config_data['mysql_db']
 
 mysql = MySQL(app)
  
-@app.route('/', methods = ['POST', 'GET'])
+@app.route('/', methods=['GET', 'POST'])
 def index():
     search_query = request.args.get('search_query', '')  # Get the search term from the query parameters
     cur = mysql.connection.cursor()
 
+    # Base SQL query
+    query = "SELECT * FROM genome"
+    conditions = []
+    parameters = []
+
+    # Split the search query based on ','
     if search_query:
-        # Modify this SQL query based on your database schema and what you want to search for
-        query = "SELECT * FROM genome WHERE species LIKE %s LIMIT 10"
-        cur.execute(query, ('%' + search_query + '%',))
-    else:
-        cur.execute("SELECT * FROM genome LIMIT 10")
-    
+        for part in search_query.split(','):
+            part = part.strip()
+            # Check if the part follows the pattern for different searches
+            if part.lower().startswith('species:'):
+                species = part.split(':', 1)[1].strip()
+                conditions.append("species LIKE %s")
+                parameters.append('%' + species + '%')
+            elif part.lower().startswith('length:>'):
+                length = part.split(':', 1)[1].strip()
+                if length.isdigit():  # Making sure the input is a number
+                    conditions.append("genome_length > %s")
+                    parameters.append(length)
+            elif part.lower().startswith('accession:'):
+                accession = part.split(':', 1)[1].strip()
+                conditions.append("accession_id LIKE %s")
+                parameters.append('%' + accession + '%')
+            # Add more conditions based on the input pattern
+
+        if conditions:
+            query += " WHERE " + " AND ".join(conditions)
+
+    query += " LIMIT 10"  # Ensure only the first 10 are fetched
+    cur.execute(query, parameters)
     genomes = cur.fetchall()
     cur.close()
+
+    # Pass the genomes data to the template
     return render_template('index.html', genomes=genomes)
 
 
