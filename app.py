@@ -50,7 +50,7 @@ def index():
         if conditions:
             query += " WHERE " + " AND ".join(conditions)
 
-    query += " LIMIT 10"  # Ensure only the first 10 are fetched
+    
     cur.execute(query, parameters)
     genomes = cur.fetchall()
     cur.close()
