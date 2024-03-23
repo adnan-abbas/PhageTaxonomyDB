@@ -6,11 +6,11 @@
 <main role="main" class="container">
     <h1 class="mt-5">Phage Genomes</h1>
 
-    <!-- Row selection and Search form -->
+    <!-- Rows per table selection -->
     <div class="mb-3 d-flex justify-content-between">
         <div>
-            <label for="rowsPerPage">Rows per page:</label>
-            <select id="rowsPerPage" class="form-select" style="width: auto;">
+            <label for="rowsPerTable">Rows per table:</label>
+            <select id="rowsPerTable" class="form-select" style="width: auto;">
                 <option value="10">10</option>
                 <option value="50">50</option>
                 <option value="100">100</option>
@@ -19,14 +19,14 @@
         <input type="text" id="searchInput" class="form-control" placeholder="Search genomes (e.g., 'Escherichia', '5000')" style="width: 50%;">
     </div>
     
-    <!-- Table goes here -->
+    <!-- Table -->
     <table class="table table-bordered" id="genomesTable">
         <thead>
             <tr>
-                <th data-column="accessionID" class="sortable">Accession ID <span class="sort-direction"></span></th>
-                <th data-column="species" class="sortable">Species <span class="sort-direction"></span></th>
-                <th data-column="genomeLength" class="sortable">Genome Length <span class="sort-direction"></span></th>
-                <th data-column="modificationDate" class="sortable">Modification Date <span class="sort-direction"></span></th>
+                <th>Accession ID</th>
+                <th>Species</th>
+                <th>Genome Length</th>
+                <th>Modification Date</th>
                 <th>Fasta</th>
             </tr>
         </thead>
@@ -37,14 +37,20 @@
                 <td>{{ genome[1] }}</td>
                 <td>{{ genome[2] }}</td>
                 <td>{{ genome[3] }}</td>
-                <td>
-                    <a href="https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&report=fasta&id={{ genome[0] }}" class="btn btn-primary" target="_blank" download="{{ genome[0] }}.fasta">Download FASTA</a>
-                </td>
+                <td><a href="https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&report=fasta&id={{ genome[0] }}" class="btn btn-primary" target="_blank" download="{{ genome[0] }}.fasta">Download FASTA</a></td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-
+    <!-- Pagination Controls -->
+    <nav aria-label="Table navigation">
+        <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#" id="prevPage">Previous</a></li>
+            <!-- Pagination buttons will be dynamically inserted here -->
+            <li class="page-item"><a class="page-link" href="#" id="nextPage">Next</a></li>
+        </ul>
+    </nav>
+</main>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     $(document).ready(function(){
@@ -56,51 +62,91 @@
             });
         });
     
-        // Rows per page functionality
-        $("#rowsPerPage").change(function() {
-            var selectedValue = parseInt($(this).val());
-    
-            $("#genomesTable tbody tr").hide(); // Hide all rows
-            $("#genomesTable tbody tr").slice(0, selectedValue).show(); // Show the number of rows based on the selection
-        }).change(); // Trigger change to apply initially
-    
-        // Existing sorting functionality
-        $('.sortable').on('click', function(){
-            var columnIndex = $(this).index();
-            var sortOrder = $(this).data('sortOrder') || 'asc'; // Default to ascending
-    
-            var rows = $("#genomesTable tbody tr:visible").toArray().sort(comparer(columnIndex, sortOrder));
-    
-            // Update the sortOrder data attribute
-            $(this).data('sortOrder', sortOrder === 'asc' ? 'desc' : 'asc');
-    
-            $.each(rows, function(index, row) {
-                $("#genomesTable tbody").append(row); // Re-append rows in sorted order
-            });
-    
-            // Add or toggle the sort-direction indicator
-            $('.sortable').find('.sort-direction').text(''); // Clear all indicators
-            $(this).find('.sort-direction').text(sortOrder === 'asc' ? ' ▲' : ' ▼'); // Set the current column's indicator
-        });
-    
-        function comparer(index, sortOrder) {
-            return function(a, b) {
-                var valA = getCellValue(a, index), valB = getCellValue(b, index);
-                valA = $.isNumeric(valA) ? parseFloat(valA) : valA.toLowerCase();
-                valB = $.isNumeric(valB) ? parseFloat(valB) : valB.toLowerCase();
-    
-                if(sortOrder === 'asc') {
-                    return valA < valB ? -1 : valA > valB ? 1 : 0;
-                } else {
-                    return valA > valB ? -1 : valA < valB ? 1 : 0;
+        let current_page = 1;
+        let rows_per_table = parseInt($("#rowsPerTable").val());
+        let sortOrderGlobal = 'asc'; // Global sort order state
+
+        // Function to show rows for a specific page
+        function showRowsForPage(page) {
+            const start_index = (page - 1) * rows_per_table;
+            const end_index = start_index + rows_per_table;
+            $("#genomesTable tbody tr").hide().slice(start_index, end_index).show();
+        }
+
+        // Function to update the display based on the current page and rows per table
+        function updateDisplay() {
+            showRowsForPage(current_page);
+            updatePagination();
+        }
+
+        // Function to handle the sorting of table rows
+        function sortTableByColumn(columnIndex) {
+            let rows = $("#genomesTable tbody tr").get();
+            rows.sort(function(a, b) {
+                let valA = $(a).children('td').eq(columnIndex).text().toLowerCase();
+                let valB = $(b).children('td').eq(columnIndex).text().toLowerCase();
+
+                if($.isNumeric(valA) && $.isNumeric(valB)) {
+                    valA = parseFloat(valA); 
+                    valB = parseFloat(valB);
                 }
-            };
+
+                if(sortOrderGlobal === 'asc') {
+                    return valA > valB ? 1 : valA < valB ? -1 : 0;
+                } else {
+                    return valA < valB ? 1 : valA > valB ? -1 : 0;
+                }
+            });
+
+            $.each(rows, function(index, row) {
+                $("#genomesTable tbody").append(row);
+            });
+
+            // Toggle the global sort order for the next sort operation
+            sortOrderGlobal = (sortOrderGlobal === 'asc') ? 'desc' : 'asc';
+            updateDisplay(); // Update display after sorting
         }
-    
-        function getCellValue(row, index) { 
-            return $(row).children('td').eq(index).text(); 
+
+        // Pagination control setup
+        function updatePagination() {
+            const numPages = Math.ceil($("#genomesTable tbody tr").length / rows_per_table);
+            // Implement pagination button updates here if dynamic buttons are needed
         }
-    });
+
+        // Rows per table selection change
+        $("#rowsPerTable").change(function() {
+            rows_per_table = parseInt($(this).val());
+            current_page = 1;
+            updateDisplay();
+        });
+
+        // Previous and Next page button handlers
+        $("#prevPage").click(function(e) {
+            e.preventDefault();
+            if (current_page > 1) {
+                current_page--;
+                updateDisplay();
+            }
+        });
+
+        $("#nextPage").click(function(e) {
+            e.preventDefault();
+            const numPages = Math.ceil($("#genomesTable tbody tr").length / rows_per_table);
+            if (current_page < numPages) {
+                current_page++;
+                updateDisplay();
+            }
+        });
+
+        // Column header click event for sorting
+        $("#genomesTable th").click(function() {
+            const columnIndex = $(this).index();
+            sortTableByColumn(columnIndex);
+        });
+
+        // Initial display update
+        updateDisplay();
+        });
 </script>
 
 {% endblock %}
