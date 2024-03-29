@@ -4,6 +4,7 @@ import json
 from flask import Response, make_response
 import urllib.request
 
+from similarity import calculate_similarity
 
 app = Flask(__name__)
 with open('db.json') as config_file:
