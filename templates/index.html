@@ -23,6 +23,7 @@
     <table class="table table-bordered" id="genomesTable">
         <thead>
             <tr>
+                <th><input type="checkbox" id="selectAll"></th> <!-- Master checkbox -->
                 <th>Accession ID</th>
                 <th>Species</th>
                 <th>Genome Length</th>
@@ -33,6 +34,7 @@
         <tbody>
             {% for genome in genomes %}
             <tr>
+                <td><input type="checkbox" class="rowCheckbox"></td> <!-- Checkbox for each row -->
                 <td>{{ genome[0] }}</td>
                 <td>{{ genome[1] }}</td>
                 <td>{{ genome[2] }}</td>
@@ -148,6 +150,29 @@
         updateDisplay();
         });
 </script>
+
+<!-- selection checkbox script-->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const selectAllCheckbox = document.getElementById('selectAll');
+        const rowCheckboxes = document.querySelectorAll('.rowCheckbox');
+
+        // When the master checkbox changes state, update all row checkboxes
+        selectAllCheckbox.addEventListener('change', function() {
+            rowCheckboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+
+        // Update the master checkbox state based on the individual selections of row checkboxes
+        rowCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                selectAllCheckbox.checked = rowCheckboxes.length === document.querySelectorAll('.rowCheckbox:checked').length;
+            });
+        });
+    });
+</script>
+
 
 {% endblock %}
 
