@@ -3,6 +3,12 @@ from flask_mysqldb import MySQL
 import json
 from flask import Response, make_response
 import urllib.request
+from flask import Flask, request, send_file
+from Bio import Entrez
+import os
+import zipfile
+import tempfile
+
 
 from similarity import calculate_similarity
 
@@ -235,6 +241,38 @@ def insert_in_host(host):
 
     cur.close()
  
+# download_fasta
+
+@app.route('/download_fasta', methods=['POST'])
+def download_fasta():
+    data = request.json
+    accession_ids = data['selectedIds']
+    # Entrez.email = "your_email@example.com"  # It's important to provide your email here
+
+    # Create a temporary directory to store FASTA files
+    with tempfile.TemporaryDirectory() as temp_dir:
+        # Folder name inside the ZIP
+        folder_name = "FASTA_Files"
+
+        # Paths for the temporary files and ZIP archive
+        zip_path = os.path.join(temp_dir, "fasta_files.zip")
+
+        with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            for accession_id in accession_ids:
+                file_name = f"{accession_id}.fasta"
+                file_path = os.path.join(temp_dir, file_name)
+                # Fetch the FASTA data and save it to the temporary file
+                with Entrez.efetch(db="nucleotide", id=accession_id, rettype="fasta", retmode="text") as handle:
+                    fasta_data = handle.read()
+                with open(file_path, "w") as fasta_file:
+                    fasta_file.write(fasta_data)
+                
+                # Add the file to the ZIP archive, including the folder path
+                zipf.write(file_path, arcname=os.path.join(folder_name, file_name))
+
+        # Send the ZIP file
+        return send_file(zip_path, as_attachment=True, download_name="fasta_files.zip")
+
 
 #main method
 if __name__ == '__main__':

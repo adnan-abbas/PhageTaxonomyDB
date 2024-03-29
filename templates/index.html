@@ -18,7 +18,11 @@
         </div>
         <input type="text" id="searchInput" class="form-control" placeholder="Search genomes (e.g., 'Escherichia', '5000')" style="width: 50%;">
     </div>
-    
+
+    <!-- Download button -->
+    <!-- Place this block above or below your table -->
+<button id="downloadSelected" class="btn btn-success">Download FASTA</button>
+
     <!-- Table -->
     <table class="table table-bordered" id="genomesTable">
         <thead>
@@ -28,7 +32,7 @@
                 <th>Species</th>
                 <th>Genome Length</th>
                 <th>Modification Date</th>
-                <th>Fasta</th>
+                <!-- <th>Fasta</th> -->
             </tr>
         </thead>
         <tbody>
@@ -39,7 +43,7 @@
                 <td>{{ genome[1] }}</td>
                 <td>{{ genome[2] }}</td>
                 <td>{{ genome[3] }}</td>
-                <td><a href="https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&report=fasta&id={{ genome[0] }}" class="btn btn-primary" target="_blank" download="{{ genome[0] }}.fasta">Download FASTA</a></td>
+                <!-- <td><a href="https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&report=fasta&id={{ genome[0] }}" class="btn btn-primary" target="_blank" download="{{ genome[0] }}.fasta">Download FASTA</a></td> -->
             </tr>
             {% endfor %}
         </tbody>
@@ -172,6 +176,80 @@
         });
     });
 </script>
+
+<!-- <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const selectAllCheckbox = document.getElementById('selectAll');
+        const rowCheckboxes = document.querySelectorAll('.rowCheckbox');
+        const downloadBtn = document.getElementById('downloadSelected');
+
+        // Master checkbox controls all row checkboxes
+        selectAllCheckbox.addEventListener('change', function() {
+            rowCheckboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+
+        // Row checkboxes control the master checkbox state
+        rowCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                selectAllCheckbox.checked = rowCheckboxes.length === document.querySelectorAll('.rowCheckbox:checked').length;
+            });
+        });
+
+        // Download button triggers download for selected FASTA files
+        downloadBtn.addEventListener('click', function() {
+            rowCheckboxes.forEach((checkbox, index) => {
+                if (checkbox.checked) {
+                    let row = checkbox.closest('tr');
+                    let fastaLink = row.querySelector('a').href;
+                    // Open in new tab; browsers might block multiple simultaneous downloads
+                    window.open(fastaLink, '_blank');
+                }
+            });
+        });
+    });
+</script> -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const downloadBtn = document.getElementById('downloadSelected');
+    
+        downloadBtn.addEventListener('click', function() {
+            const selectedIds = Array.from(document.querySelectorAll('.rowCheckbox:checked')).map(checkbox => {
+                return checkbox.closest('tr').querySelector('td:nth-child(2)').textContent.trim(); // Assuming Accession ID is in the 2nd column
+            });
+    
+            if (selectedIds.length > 0) {
+                fetch('/download_fasta', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ selectedIds }),
+                })
+                .then(response => {
+                    if(response.ok) return response.blob();
+                    throw new Error('Failed to download file.');
+                })
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = "fasta_files.zip"; // Assuming you're sending a ZIP
+                    document.body.appendChild(a);
+                    a.click();    
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch(error => console.error('Error:', error));
+            } else {
+                alert('Please select at least one genome.');
+            }
+        });
+    });
+    </script>
+    
+    
 
 
 {% endblock %}
