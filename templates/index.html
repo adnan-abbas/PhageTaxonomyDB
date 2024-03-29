@@ -19,10 +19,6 @@
         <input type="text" id="searchInput" class="form-control" placeholder="Search genomes (e.g., 'Escherichia', '5000')" style="width: 50%;">
     </div>
 
-    <!-- Download button -->
-    <!-- Place this block above or below your table -->
-<button id="downloadSelected" class="btn btn-success">Download FASTA</button>
-
     <!-- Table -->
     <table class="table table-bordered" id="genomesTable">
         <thead>
@@ -48,14 +44,31 @@
             {% endfor %}
         </tbody>
     </table>
-    <!-- Pagination Controls -->
-    <nav aria-label="Table navigation">
-        <ul class="pagination">
+
+<!-- Combined Pagination, Page Number, and Download Button Container -->
+<div class="d-flex justify-content-between align-items-center mt-3">
+    <!-- Left Side (Pagination Controls) -->
+    <nav aria-label="Table navigation" class="me-auto"> <!-- Use me-auto to push everything else to the right -->
+        <ul class="pagination mb-0"> <!-- mb-0 to eliminate bottom margin -->
             <li class="page-item"><a class="page-link" href="#" id="prevPage">Previous</a></li>
             <!-- Pagination buttons will be dynamically inserted here -->
             <li class="page-item"><a class="page-link" href="#" id="nextPage">Next</a></li>
         </ul>
     </nav>
+    
+    <!-- Center (Page Number Information) -->
+    <!-- This is visually centered in the container -->
+    <span id="pageNumberInfo" style="position: absolute; left: 50%; transform: translateX(-50%);">Page 1 of X</span>
+
+    <!-- Right Side (Download Selected FASTA Button) -->
+    <button id="downloadSelected" class="btn btn-success ms-auto">Download FASTA</button> <!-- Use ms-auto to align to the right -->
+</div>
+<!-- End Container -->
+
+
+
+
+
 </main>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
@@ -152,7 +165,34 @@
 
         // Initial display update
         updateDisplay();
+        function updatePaginationAndPageNumbers() {
+            const totalItems = $("#genomesTable tbody tr").length;
+            const rowsPerPage = parseInt($("#rowsPerTable").val(), 10);
+            const totalPages = Math.ceil(totalItems / rowsPerPage);
+            const pageNumberInfo = document.getElementById('pageNumberInfo');
+            pageNumberInfo.textContent = `Page ${current_page} of ${totalPages}`;
+
+            // Update the visibility of Previous/Next buttons
+            $("#prevPage").parent().toggleClass('disabled', current_page === 1);
+            $("#nextPage").parent().toggleClass('disabled', current_page === totalPages);
+        }
+
+        // Call this function to initially set the page numbers and whenever the table data or pagination changes
+        updatePaginationAndPageNumbers();
+        // Make sure to also call this function inside your pagination event handlers and anywhere the table is updated or filtered
+
+        // Example: Update page numbers after changing rows per page
+        $("#rowsPerTable").change(function() {
+            current_page = 1; // Reset to the first page when rows per table changes
+            updateDisplay(); // You might already have this function to update table display
+            updatePaginationAndPageNumbers(); // Update page numbers and pagination buttons
         });
+
+        // Ensure you also call updatePaginationAndPageNumbers inside your prevPage and nextPage click handlers
+    });
+ 
+
+        
 </script>
 
 <!-- selection checkbox script-->
