@@ -177,40 +177,7 @@
     });
 </script>
 
-<!-- <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const selectAllCheckbox = document.getElementById('selectAll');
-        const rowCheckboxes = document.querySelectorAll('.rowCheckbox');
-        const downloadBtn = document.getElementById('downloadSelected');
-
-        // Master checkbox controls all row checkboxes
-        selectAllCheckbox.addEventListener('change', function() {
-            rowCheckboxes.forEach(checkbox => {
-                checkbox.checked = this.checked;
-            });
-        });
-
-        // Row checkboxes control the master checkbox state
-        rowCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                selectAllCheckbox.checked = rowCheckboxes.length === document.querySelectorAll('.rowCheckbox:checked').length;
-            });
-        });
-
-        // Download button triggers download for selected FASTA files
-        downloadBtn.addEventListener('click', function() {
-            rowCheckboxes.forEach((checkbox, index) => {
-                if (checkbox.checked) {
-                    let row = checkbox.closest('tr');
-                    let fastaLink = row.querySelector('a').href;
-                    // Open in new tab; browsers might block multiple simultaneous downloads
-                    window.open(fastaLink, '_blank');
-                }
-            });
-        });
-    });
-</script> -->
-
+<!-- Download fasta files -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const downloadBtn = document.getElementById('downloadSelected');
