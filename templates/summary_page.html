@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genome Summary</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <style>
+        body {
+            padding-top: 20px;
+        }
+        .feature-table th, .feature-table td {
+            text-align: center;
+        }
+        .feature-icon {
+            width: 32px;
+            height: auto;
+        }
+        .card-header:first-child {
+            border-radius: 0.25rem 0.25rem 0 0;
+        }
+        .card-footer:last-child {
+            border-radius: 0 0 0.25rem 0.25rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Combined Card for Genome Summary and Features -->
+    <div class="card">
+        <div class="card-header">
+            <h2>Genome Summary: {{ details.accession_id }}</h2>
+        </div>
+        
+        <!-- Genome Summary -->
+        <div class="card-body">
+            <h5 class="card-title">{{ details.species }}</h5>
+            <p class="card-text"><strong>Accession ID:</strong> {{ details.accession_id }}</p>
+            <p class="card-text"><strong>Genome Length:</strong> {{ details.genome_length }} bp</p>
+            <p class="card-text"><strong>Modification Date:</strong> {{ details.modification_date }}</p>
+        </div>
+
+        <!-- Features Section -->
+        <div class="card-body">
+            <h3>Features</h3>
+            <div class="table-responsive">
+                <table class="table feature-table">
+                    <thead>
+                        <tr>
+                            <th>Classification</th>
+                            <th>Mol GC</th>
+                            <th>Number CDS</th>
+                            <th>Positive Strand</th>
+                            <th>Negative Strand</th>
+                            <th>tRNAs</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for feature in features %}
+                        <tr>
+                            <td>{{ feature.classification }}</td>
+                            <td>{{ feature.mol_gc }}</td>
+                            <td>{{ feature.number_cds }}</td>
+                            <td>{{ feature.positive_strand }}</td>
+                            <td>{{ feature.negative_strand }}</td>
+                            <td>{{ feature.trnas }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="card-footer text-right">
+            <a href="/path/to/download/{{ details.accession_id }}.fasta" class="btn btn-primary">
+                <i class="fas fa-download"></i> Download FASTA
+            </a>
+            <a href="/" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to List
+            </a>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

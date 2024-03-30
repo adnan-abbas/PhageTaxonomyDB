@@ -34,15 +34,15 @@
         <tbody>
             {% for genome in genomes %}
             <tr>
-                <td><input type="checkbox" class="rowCheckbox"></td> <!-- Checkbox for each row -->
-                <td>{{ genome[0] }}</td>
+                <td><input type="checkbox" class="rowCheckbox"></td>
+                <td><a href="/summary/{{ genome[0] }}" target="_blank">{{ genome[0] }}</a></td>
                 <td>{{ genome[1] }}</td>
                 <td>{{ genome[2] }}</td>
                 <td>{{ genome[3] }}</td>
-                <!-- <td><a href="https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&report=fasta&id={{ genome[0] }}" class="btn btn-primary" target="_blank" download="{{ genome[0] }}.fasta">Download FASTA</a></td> -->
             </tr>
             {% endfor %}
         </tbody>
+        
     </table>
 
 <!-- Begin Combined Pagination, Page Number, and Download Button Container -->

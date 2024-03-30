@@ -273,6 +273,52 @@ def download_fasta():
         # Send the ZIP file
         return send_file(zip_path, as_attachment=True, download_name="fasta_files.zip")
 
+# show_summary
+    
+@app.route('/summary/<accessionID>')
+def show_summary(accessionID):
+    cur = mysql.connection.cursor()
+
+    # Fetch genome data
+    cur.execute("SELECT * FROM genome WHERE Accession = %s", [accessionID])
+    genome_data = cur.fetchone()
+
+    # Check if genome data exists
+    if not genome_data:
+        flash('No data found for the given Accession ID', 'danger')
+        return redirect(url_for('index'))
+
+    # Fetch features data
+    cur.execute("SELECT * FROM features WHERE Accession = %s", [accessionID])
+    features_data = cur.fetchall()
+    cur.close()
+
+    # Preparing data for the template
+    genome_details = {
+        'accession_id': genome_data[0],
+        'species': genome_data[1],
+        'genome_length': genome_data[2],
+        'modification_date': genome_data[3],
+        'sequence': genome_data[4]
+    }
+
+    # Convert features_data to a list of dictionaries if needed, or pass directly if it's appropriately structured
+    features = []
+    for feature in features_data:
+        features.append({
+            'classification': feature[1],
+            'mol_gc': feature[2],
+            'number_cds': feature[3],
+            'positive_strand': feature[4],
+            'negative_strand': feature[5],
+            'trnas': feature[6]
+        })
+    print("Genome Details:", genome_details)
+    print("Features:", features)
+
+    return render_template('summary_page.html', details=genome_details, features=features)
+
+
 
 #main method
 if __name__ == '__main__':
