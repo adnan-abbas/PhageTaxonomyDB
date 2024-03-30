@@ -45,25 +45,28 @@
         </tbody>
     </table>
 
-<!-- Combined Pagination, Page Number, and Download Button Container -->
+<!-- Begin Combined Pagination, Page Number, and Download Button Container -->
 <div class="d-flex justify-content-between align-items-center mt-3">
-    <!-- Left Side (Pagination Controls) -->
-    <nav aria-label="Table navigation" class="me-auto"> <!-- Use me-auto to push everything else to the right -->
-        <ul class="pagination mb-0"> <!-- mb-0 to eliminate bottom margin -->
+    <!-- Pagination Controls -->
+    <nav aria-label="Table navigation">
+        <ul class="pagination mb-0"> <!-- Ensure mb-0 to avoid extra margin -->
+            <li class="page-item"><a class="page-link" href="#" id="firstPage">First</a></li>
             <li class="page-item"><a class="page-link" href="#" id="prevPage">Previous</a></li>
             <!-- Pagination buttons will be dynamically inserted here -->
             <li class="page-item"><a class="page-link" href="#" id="nextPage">Next</a></li>
+            <li class="page-item"><a class="page-link" href="#" id="lastPage">Last</a></li>
         </ul>
     </nav>
     
-    <!-- Center (Page Number Information) -->
-    <!-- This is visually centered in the container -->
-    <span id="pageNumberInfo" style="position: absolute; left: 50%; transform: translateX(-50%);">Page 1 of X</span>
+    <!-- Page Number Information -->
+    <span id="pageNumberInfo">Page 1 of X</span> <!-- Adjusted for inline display -->
 
-    <!-- Right Side (Download Selected FASTA Button) -->
-    <button id="downloadSelected" class="btn btn-success ms-auto">Download FASTA</button> <!-- Use ms-auto to align to the right -->
+    <!-- Download Selected FASTA Button -->
+    <button id="downloadSelected" class="btn btn-success">Download Selected FASTA</button>
 </div>
-<!-- End Container -->
+<!-- End Combined Pagination, Page Number, and Download Button Container -->
+
+
 
 
 
@@ -72,128 +75,80 @@
 </main>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-    $(document).ready(function(){
-        // Existing search functionality
-        $("#searchInput").on("keyup", function() {
-            var value = $(this).val().toLowerCase();
-            $("#genomesTable tbody tr").filter(function() {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-            });
-        });
-    
-        let current_page = 1;
-        let rows_per_table = parseInt($("#rowsPerTable").val());
-        let sortOrderGlobal = 'asc'; // Global sort order state
+   $(document).ready(function(){
+    let current_page = 1;
+    let rows_per_table = parseInt($("#rowsPerTable").val());
 
-        // Function to show rows for a specific page
-        function showRowsForPage(page) {
-            const start_index = (page - 1) * rows_per_table;
-            const end_index = start_index + rows_per_table;
-            $("#genomesTable tbody tr").hide().slice(start_index, end_index).show();
-        }
+    // Update the pagination and page numbers
+    function updatePaginationAndPageNumbers() {
+        const totalItems = $("#genomesTable tbody tr").length;
+        const totalPages = Math.ceil(totalItems / rows_per_table);
+        $("#pageNumberInfo").text(`Page ${current_page} of ${totalPages}`);
 
-        // Function to update the display based on the current page and rows per table
-        function updateDisplay() {
-            showRowsForPage(current_page);
-            updatePagination();
-        }
+        $("#firstPage").parent().toggleClass('disabled', current_page === 1);
+        $("#prevPage").parent().toggleClass('disabled', current_page === 1);
+        $("#nextPage").parent().toggleClass('disabled', current_page === totalPages);
+        $("#lastPage").parent().toggleClass('disabled', current_page === totalPages);
+    }
 
-        // Function to handle the sorting of table rows
-        function sortTableByColumn(columnIndex) {
-            let rows = $("#genomesTable tbody tr").get();
-            rows.sort(function(a, b) {
-                let valA = $(a).children('td').eq(columnIndex).text().toLowerCase();
-                let valB = $(b).children('td').eq(columnIndex).text().toLowerCase();
+    function showRowsForPage(page) {
+        const start_index = (page - 1) * rows_per_table;
+        const end_index = start_index + rows_per_table;
+        $("#genomesTable tbody tr").hide().slice(start_index, end_index).show();
+    }
 
-                if($.isNumeric(valA) && $.isNumeric(valB)) {
-                    valA = parseFloat(valA); 
-                    valB = parseFloat(valB);
-                }
+    function updateDisplay() {
+        showRowsForPage(current_page);
+        updatePaginationAndPageNumbers();
+    }
 
-                if(sortOrderGlobal === 'asc') {
-                    return valA > valB ? 1 : valA < valB ? -1 : 0;
-                } else {
-                    return valA < valB ? 1 : valA > valB ? -1 : 0;
-                }
-            });
-
-            $.each(rows, function(index, row) {
-                $("#genomesTable tbody").append(row);
-            });
-
-            // Toggle the global sort order for the next sort operation
-            sortOrderGlobal = (sortOrderGlobal === 'asc') ? 'desc' : 'asc';
-            updateDisplay(); // Update display after sorting
-        }
-
-        // Pagination control setup
-        function updatePagination() {
-            const numPages = Math.ceil($("#genomesTable tbody tr").length / rows_per_table);
-            // Implement pagination button updates here if dynamic buttons are needed
-        }
-
-        // Rows per table selection change
-        $("#rowsPerTable").change(function() {
-            rows_per_table = parseInt($(this).val());
+    $("#firstPage").click(function(e) {
+        e.preventDefault();
+        if (current_page > 1) {
             current_page = 1;
             updateDisplay();
-        });
-
-        // Previous and Next page button handlers
-        $("#prevPage").click(function(e) {
-            e.preventDefault();
-            if (current_page > 1) {
-                current_page--;
-                updateDisplay();
-            }
-        });
-
-        $("#nextPage").click(function(e) {
-            e.preventDefault();
-            const numPages = Math.ceil($("#genomesTable tbody tr").length / rows_per_table);
-            if (current_page < numPages) {
-                current_page++;
-                updateDisplay();
-            }
-        });
-
-        // Column header click event for sorting
-        $("#genomesTable th").click(function() {
-            const columnIndex = $(this).index();
-            sortTableByColumn(columnIndex);
-        });
-
-        // Initial display update
-        updateDisplay();
-        function updatePaginationAndPageNumbers() {
-            const totalItems = $("#genomesTable tbody tr").length;
-            const rowsPerPage = parseInt($("#rowsPerTable").val(), 10);
-            const totalPages = Math.ceil(totalItems / rowsPerPage);
-            const pageNumberInfo = document.getElementById('pageNumberInfo');
-            pageNumberInfo.textContent = `Page ${current_page} of ${totalPages}`;
-
-            // Update the visibility of Previous/Next buttons
-            $("#prevPage").parent().toggleClass('disabled', current_page === 1);
-            $("#nextPage").parent().toggleClass('disabled', current_page === totalPages);
         }
-
-        // Call this function to initially set the page numbers and whenever the table data or pagination changes
-        updatePaginationAndPageNumbers();
-        // Make sure to also call this function inside your pagination event handlers and anywhere the table is updated or filtered
-
-        // Example: Update page numbers after changing rows per page
-        $("#rowsPerTable").change(function() {
-            current_page = 1; // Reset to the first page when rows per table changes
-            updateDisplay(); // You might already have this function to update table display
-            updatePaginationAndPageNumbers(); // Update page numbers and pagination buttons
-        });
-
-        // Ensure you also call updatePaginationAndPageNumbers inside your prevPage and nextPage click handlers
     });
- 
 
-        
-</script>
+    $("#lastPage").click(function(e) {
+        e.preventDefault();
+        const totalItems = $("#genomesTable tbody tr").length;
+        const totalPages = Math.ceil(totalItems / rows_per_table);
+        if (current_page < totalPages) {
+            current_page = totalPages;
+            updateDisplay();
+        }
+    });
+
+    $("#prevPage").click(function(e) {
+        e.preventDefault();
+        if (current_page > 1) {
+            current_page--;
+            updateDisplay();
+        }
+    });
+
+    $("#nextPage").click(function(e) {
+        e.preventDefault();
+        const totalItems = $("#genomesTable tbody tr").length;
+        const totalPages = Math.ceil(totalItems / rows_per_table);
+        if (current_page < totalPages) {
+            current_page++;
+            updateDisplay();
+        }
+    });
+
+    $("#rowsPerTable").change(function() {
+        rows_per_table = parseInt($(this).val());
+        current_page = 1;
+        updateDisplay();
+    });
+
+    updateDisplay();
+});
+
+    </script>
+    
 
 <!-- selection checkbox script-->
 <script>
