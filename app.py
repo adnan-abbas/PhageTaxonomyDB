@@ -318,6 +318,72 @@ def show_summary(accessionID):
 
     return render_template('summary_page.html', details=genome_details, features=features)
 
+@app.route('/data_statistics')
+def data_statistics():
+    cur = mysql.connection.cursor()
+
+    # Genomic Length Insights
+    cur.execute("""
+        SELECT MIN('genome_length'), MAX('genome_length'), AVG('genome_length'), COUNT(*), SUM('genome_length')
+        FROM genome
+    """)
+    genome_length_insights = cur.fetchone()
+
+    # GC Content Insights for Features (if applicable)
+    cur.execute("""
+        SELECT MIN('mol_gc'), MAX('mol_gc'), AVG('mol_gc'), COUNT(*), SUM('mol_gc')
+        FROM features
+    """)
+    gc_content_insights = cur.fetchone()
+
+    # Detailed Features Statistics (e.g., for number_cds)
+    cur.execute("""
+        SELECT MIN('number_cds'), MAX('number_cds'), AVG('number_cds'), COUNT(*), SUM('number_cds')
+        FROM features
+    """)
+    cds_insights = cur.fetchone()
+
+    # Taxonomy Insights - Count of Genomes per Genus
+    cur.execute("""
+        SELECT genus, COUNT(*) AS genome_count
+        FROM taxonomy
+        GROUP BY genus
+    """)
+    genomes_per_genus = cur.fetchall()
+
+    # Total number of unique species
+    cur.execute("SELECT COUNT(DISTINCT species) FROM taxonomy")
+    total_species = cur.fetchone()[0]
+
+    # Distribution of species across different families
+    cur.execute("""
+        SELECT family, COUNT(DISTINCT species) AS species_count
+        FROM taxonomy
+        GROUP BY family
+    """)
+    species_per_family = cur.fetchall()
+
+    # Average genome length per species (if applicable)
+    cur.execute("""
+        SELECT taxonomy.species, AVG('genome_length') AS avg_length
+        FROM genome
+        JOIN taxonomy ON genome.species = taxonomy.species
+        GROUP BY taxonomy.species
+    """)
+    avg_genome_length_per_species = cur.fetchall()
+
+    cur.close()
+
+    return render_template(
+        'data_statistics.html',
+        genome_length_insights=genome_length_insights,
+        gc_content_insights=gc_content_insights,
+        cds_insights=cds_insights,
+        genomes_per_genus=genomes_per_genus,
+        total_species=total_species,
+        species_per_family=species_per_family,
+        avg_genome_length_per_species=avg_genome_length_per_species
+    )
 
 
 #main method
