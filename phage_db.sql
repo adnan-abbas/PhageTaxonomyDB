@@ -1,6 +1,8 @@
 -- MySQL dump 10.13  Distrib 8.0.27, for macos11 (x86_64)
 --
+
 -- Host: localhost    Database: phage_db
+
 -- ------------------------------------------------------
 -- Server version	8.3.0
 
@@ -30,7 +32,9 @@ CREATE TABLE `features` (
   `Positive Strand (%)` double DEFAULT NULL,
   `Negative Strand (%)` double DEFAULT NULL,
   `tRNAs` int DEFAULT NULL,
-  PRIMARY KEY (`Accession`)
+
+  PRIMARY KEY (`Accession`),
+  CONSTRAINT `feature_genome_fk` FOREIGN KEY (`Accession`) REFERENCES `genome` (`Accession`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -138,7 +142,9 @@ DROP TABLE IF EXISTS `taxonomy`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `taxonomy` (
   `Species` varchar(45) NOT NULL,
-  `Order` text,
+
+  `Orders` text,
+
   `Family` text,
   `Genus` text,
   PRIMARY KEY (`Species`),
@@ -155,6 +161,38 @@ LOCK TABLES `taxonomy` WRITE;
 INSERT INTO `taxonomy` VALUES ('Bacteroides phage crAss001','Crassvirales','Steigviridae','Kehishuvirus'),('Bacteroides phage crAss002','Crassvirales','Intestiviridae','Jahgtovirus'),('Bacteroides phage DAC15','Crassvirales','Steigviridae','Wulfhauvirus'),('Bacteroides phage DAC17','Crassvirales','Steigviridae','Wulfhauvirus'),('Bacteroides phage PhiCrAssBcn1','Crassvirales','Steigviridae','Kehishuvirus'),('Bacteroides phage PhiCrAssBcn13','Crassvirales','Steigviridae','Kehishuvirus'),('Bacteroides phage PhiCrAssBcn16','Crassvirales','Steigviridae','Kehishuvirus'),('Bacteroides phage PhiCrAssBcn22','Crassvirales','Steigviridae','Kehishuvirus'),('Bacteroides phage PhiCrAssBcn24','Crassvirales','Steigviridae','Kehishuvirus'),('Bacteroides phage PhiCrAssBcn4','Crassvirales','Steigviridae','Kehishuvirus'),('Bacteroides phage PhiCrAssBcn9','Crassvirales','Steigviridae','Kehishuvirus'),('Bdellovibrio phage phiMH2K','Petitvirales','Microviridae','Bdellomicrovirus'),('Cellulophaga phage phi14:2','Crassvirales','Steigviridae','Akihdevirus'),('Chlamydia phage 2','Petitvirales','Microviridae','Chlamydiamicrovirus'),('Chlamydia phage 3','Petitvirales','Microviridae','Chlamydiamicrovirus'),('Chlamydia phage 4','Petitvirales','Microviridae','Chlamydiamicrovirus'),('Chlamydia phage CPG1','Petitvirales','Microviridae','Chlamydiamicrovirus'),('Chlamydia phage phiCPAR39','Petitvirales','Microviridae','Chlamydiamicrovirus'),('Enterobacteria phage FL68 Tallahassee/FL/2012','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage FL76 Tallahassee/FL/2012','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage ID1','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage ID11','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage ID12','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage ID18','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage ID204 Moscow/ID','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage ID22','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage ID34','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage ID41','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage ID45','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage ID8','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage MED1','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage NC1','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage NC10','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage NC11','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage NC13','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage NC16','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage NC19','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage NC2','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage NC3','Petitvirales','Microviridae','Alphatrevirus'),('Enterobacteria phage NC37','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage NC41','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage NC5','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage NC51','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage NC56','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage NC6','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage NC7','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage S13','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage WA10','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage WA11','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage WA13','Petitvirales','Microviridae','Alphatrevirus'),('Enterobacteria phage WA14','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage WA2','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage WA3','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage WA4','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage WA5','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage WA6','Petitvirales','Microviridae','Gequatrovirus'),('Escherichia phage alpha3','Petitvirales','Microviridae','Alphatrevirus'),('Escherichia phage EC6098','Petitvirales','Microviridae','Enterogokushovirus'),('Escherichia phage EMCL318','Petitvirales','Microviridae','Gequatrovirus'),('Escherichia phage G4','Petitvirales','Microviridae','Gequatrovirus'),('Escherichia phage ID2 Moscow/ID/2001','Petitvirales','Microviridae','Gequatrovirus'),('Escherichia phage ID21','Petitvirales','Microviridae','Alphatrevirus'),('Escherichia phage ID32','Petitvirales','Microviridae','Alphatrevirus'),('Escherichia phage ID52','Petitvirales','Microviridae','Gequatrovirus'),('Escherichia phage ID62','Petitvirales','Microviridae','Alphatrevirus'),('Escherichia phage Lilleven','Petitvirales','Microviridae','Alphatrevirus'),('Escherichia phage NC28','Petitvirales','Microviridae','Alphatrevirus'),('Escherichia phage NC29','Petitvirales','Microviridae','Alphatrevirus'),('Escherichia phage NC35','Petitvirales','Microviridae','Alphatrevirus'),('Escherichia phage phiK','Petitvirales','Microviridae','Alphatrevirus'),('Escherichia phage phiX174','Petitvirales','Microviridae','Sinsheimervirus'),('Escherichia phage St-1','Petitvirales','Microviridae','Alphatrevirus'),('Escherichia phage WA45','Petitvirales','Microviridae','Alphatrevirus'),('Protaetiibacter phage SSC1','Petitvirales','Microviridae','Sinsheimervirus'),('Pseudomonas phage vB_Pae-PA152','Caudovirales','Schitoviridae','Enquatrovirus'),('Salmonella phage alphaalpha','Petitvirales','Microviridae','Sinsheimervirus'),('Shigella phage SGF3','Petitvirales','Microviridae','Sinsheimervirus'),('Spiroplasma phage 4','Petitvirales','Microviridae','Spiromicrovirus');
 /*!40000 ALTER TABLE `taxonomy` ENABLE KEYS */;
 UNLOCK TABLES;
+
+INSERT INTO `taxonomy` VALUES ('abcd','ok','aa','bb'),('Bacteroides phage crAss001','Crassvirales','Steigviridae','Kehishuvirus'),('Bacteroides phage crAss002','Crassvirales','Intestiviridae','Jahgtovirus'),('Bacteroides phage DAC15','Crassvirales','Steigviridae','Wulfhauvirus'),('Bacteroides phage DAC17','Crassvirales','Steigviridae','Wulfhauvirus'),('Bacteroides phage PhiCrAssBcn1','Crassvirales','Steigviridae','Kehishuvirus'),('Bacteroides phage PhiCrAssBcn13','Crassvirales','Steigviridae','Kehishuvirus'),('Bacteroides phage PhiCrAssBcn16','Crassvirales','Steigviridae','Kehishuvirus'),('Bacteroides phage PhiCrAssBcn22','Crassvirales','Steigviridae','Kehishuvirus'),('Bacteroides phage PhiCrAssBcn24','Crassvirales','Steigviridae','Kehishuvirus'),('Bacteroides phage PhiCrAssBcn4','Crassvirales','Steigviridae','Kehishuvirus'),('Bacteroides phage PhiCrAssBcn9','Crassvirales','Steigviridae','Kehishuvirus'),('Bdellovibrio phage phiMH2K','Petitvirales','Microviridae','Bdellomicrovirus'),('Cellulophaga phage phi14:2','Crassvirales','Steigviridae','Akihdevirus'),('Chlamydia phage 2','Petitvirales','Microviridae','Chlamydiamicrovirus'),('Chlamydia phage 3','Petitvirales','Microviridae','Chlamydiamicrovirus'),('Chlamydia phage 4','Petitvirales','Microviridae','Chlamydiamicrovirus'),('Chlamydia phage CPG1','Petitvirales','Microviridae','Chlamydiamicrovirus'),('Chlamydia phage phiCPAR39','Petitvirales','Microviridae','Chlamydiamicrovirus'),('Enterobacteria phage FL68 Tallahassee/FL/2012','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage FL76 Tallahassee/FL/2012','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage ID1','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage ID11','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage ID12','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage ID18','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage ID204 Moscow/ID','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage ID22','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage ID34','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage ID41','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage ID45','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage ID8','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage MED1','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage NC1','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage NC10','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage NC11','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage NC13','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage NC16','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage NC19','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage NC2','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage NC3','Petitvirales','Microviridae','Alphatrevirus'),('Enterobacteria phage NC37','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage NC41','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage NC5','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage NC51','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage NC56','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage NC6','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage NC7','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage S13','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage WA10','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage WA11','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage WA13','Petitvirales','Microviridae','Alphatrevirus'),('Enterobacteria phage WA14','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage WA2','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage WA3','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage WA4','Petitvirales','Microviridae','Sinsheimervirus'),('Enterobacteria phage WA5','Petitvirales','Microviridae','Gequatrovirus'),('Enterobacteria phage WA6','Petitvirales','Microviridae','Gequatrovirus'),('Escherichia phage alpha3','Petitvirales','Microviridae','Alphatrevirus'),('Escherichia phage EC6098','Petitvirales','Microviridae','Enterogokushovirus'),('Escherichia phage EMCL318','Petitvirales','Microviridae','Gequatrovirus'),('Escherichia phage G4','Petitvirales','Microviridae','Gequatrovirus'),('Escherichia phage ID2 Moscow/ID/2001','Petitvirales','Microviridae','Gequatrovirus'),('Escherichia phage ID21','Petitvirales','Microviridae','Alphatrevirus'),('Escherichia phage ID32','Petitvirales','Microviridae','Alphatrevirus'),('Escherichia phage ID52','Petitvirales','Microviridae','Gequatrovirus'),('Escherichia phage ID62','Petitvirales','Microviridae','Alphatrevirus'),('Escherichia phage Lilleven','Petitvirales','Microviridae','Alphatrevirus'),('Escherichia phage NC28','Petitvirales','Microviridae','Alphatrevirus'),('Escherichia phage NC29','Petitvirales','Microviridae','Alphatrevirus'),('Escherichia phage NC35','Petitvirales','Microviridae','Alphatrevirus'),('Escherichia phage phiK','Petitvirales','Microviridae','Alphatrevirus'),('Escherichia phage phiX174','Petitvirales','Microviridae','Sinsheimervirus'),('Escherichia phage St-1','Petitvirales','Microviridae','Alphatrevirus'),('Escherichia phage WA45','Petitvirales','Microviridae','Alphatrevirus'),('ok1234','askj','jun','kamsd'),('plasert123','wqert','hjas','oka'),('Protaetiibacter phage SSC1','Petitvirales','Microviridae','Sinsheimervirus'),('Pseudomonas phage vB_Pae-PA152','Caudovirales','Schitoviridae','Enquatrovirus'),('Salmonella phage alphaalpha','Petitvirales','Microviridae','Sinsheimervirus'),('Shigella phage SGF3','Petitvirales','Microviridae','Sinsheimervirus'),('Spiroplasma phage 4','Petitvirales','Microviridae','Spiromicrovirus');
+/*!40000 ALTER TABLE `taxonomy` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `users` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `email` varchar(100) NOT NULL,
+  `password_hash` varchar(128) NOT NULL,
+  `role` enum('admin','researcher') NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (1,'owaiskhan@gmail.com','$2b$12$SrLAtbxXt.AoG.MW05SnLuV6W2yUEBl.LMEO12dN5u6JCoGTQtTFK','researcher'),(2,'bottle@gmail.com','$2b$12$zLo1OWPGKXp.DajgkwdbgubybE3rpN/duLXM8bEm3FMNQzl6cbSXq','researcher');
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -165,4 +203,7 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
+
 -- Dump completed on 2024-04-03 12:47:26
+
+-- Dump completed on 2024-04-05 15:59:01

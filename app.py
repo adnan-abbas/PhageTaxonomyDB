@@ -8,8 +8,8 @@ from Bio import Entrez
 import os
 import zipfile
 import tempfile
-
-
+from flask_bcrypt import Bcrypt
+import re
 from similarity import calculate_similarity
 
 app = Flask(__name__)
@@ -21,13 +21,91 @@ app.config['MYSQL_USER'] = config_data['mysql_user']
 app.config['MYSQL_PASSWORD'] = config_data['mysql_password']
 app.config['MYSQL_DB'] = config_data['mysql_db']
 
-
+app.secret_key = 'phagetaxonomy'
 mysql = MySQL(app)
 
 generic_query = "SELECT * FROM genome"
 generic_parameters = []
+
+bcrypt = Bcrypt(app)
+
  
 @app.route('/', methods=['GET', 'POST'])
+def landing():
+    return render_template('landing.html')
+
+
+@app.route('/signup', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * FROM users WHERE email = %s", (email,))
+        existing_user = cur.fetchone()
+        cur.close()
+
+        if existing_user:
+            flash('Email already exists. Please choose a different email.', 'error')
+            return redirect(url_for('register'))
+
+
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+            flash('Invalid email format. Please enter a valid email address.', 'error')
+            return redirect(url_for('register'))
+
+        if len(password) < 8:
+            flash('Password must be at least 8 characters long.', 'error')
+            return redirect(url_for('register'))
+
+
+        # Check if passwords match
+        if password != confirm_password:
+            flash('Passwords do not match. Please try again.', 'error')
+            return redirect(url_for('register'))
+
+        # Hash the password
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+        # Save the user to the database
+        cur = mysql.connection.cursor()
+        cur.execute("INSERT INTO users (email, password_hash, role) VALUES (%s, %s, 'researcher')", (email, hashed_password))
+        mysql.connection.commit()
+        cur.close()
+
+        flash('Registration successful! Please log in.', 'success')
+        return redirect(url_for('login'))
+    return render_template('signup.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+
+        # Retrieve user from the database
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * FROM users WHERE email = %s", (email,))
+        user = cur.fetchone()
+        cur.close()
+
+        if user and bcrypt.check_password_hash(user[2], password):
+            # Store user information in session
+            session['user_id'] = user[0]
+            session['email'] = user[1]
+            session['role'] = user[3]
+            flash('Login successful!', 'success')
+            return redirect(url_for('index'))  # Redirect to the home page after login
+        else:
+            flash('Invalid email or password. Please try again.', 'error')
+
+
+    return render_template('login.html')
+
+
+@app.route('/index', methods=['GET', 'POST'])
 def index():
     search_query = request.args.get('search_query', '')  # Get the search term from the query parameters
     cur = mysql.connection.cursor()
@@ -68,7 +146,9 @@ def index():
     # Pass the genomes data to the template
     return render_template('index.html', genomes=genomes)
 
-
+@app.route('/admin_login', methods = ['POST', 'GET'])
+def admin_login():
+    return render_template('admin_login.html')
 
 @app.route('/update_data', methods = ['POST', 'GET'])
 def update_data():
@@ -120,7 +200,7 @@ def update():
         genome_length = data_genome[0][2]
         modification_date = data_genome[0][3]
         sequence = data_genome[0][4]
-        print(sequence)
+        #print(sequence)
 
 
         sql_taxonomy = "SELECT * FROM taxonomy WHERE Species = %s"
