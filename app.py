@@ -23,6 +23,9 @@ app.config['MYSQL_DB'] = config_data['mysql_db']
 
 
 mysql = MySQL(app)
+
+generic_query = "SELECT * FROM genome"
+generic_parameters = []
  
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -384,6 +387,114 @@ def data_statistics():
         species_per_family=species_per_family,
         avg_genome_length_per_species=avg_genome_length_per_species
     )
+
+@app.route('/advanced_search', methods=['GET', 'POST'])
+def advanced_search():
+    return render_template('advanced_search.html')
+
+@app.route('/advanced_search_post', methods=['POST'])
+def advanced_search_post():
+    cur = mysql.connection.cursor()
+
+    # Base SQL query
+    query = "SELECT * FROM genome"
+    conditions = []
+    parameters = []
+
+        #this data is coming from insertdata.html AJAX POST call
+    accession_id = request.form['accession_id']
+    genome_sequence = request.form['sequence']
+    species = request.form['species']
+    genome_length = request.form['genome_length']
+
+    if accession_id != "":
+        temp_conditions = []
+        for part in accession_id.split(','):
+            part = part.strip()
+            temp_conditions.append("Accession LIKE %s")
+            parameters.append('%' + part + '%')
+        conditions.append(" OR ".join(temp_conditions))
+    if genome_sequence != "":
+        temp_conditions = []
+        for part in genome_sequence.split(','):
+            part = part.strip()
+            temp_conditions.append("Sequence LIKE %s")
+            parameters.append('%' + part + '%')
+        conditions.append(" OR ".join(temp_conditions))
+    '''
+    if modification_date != "":
+        temp_conditions = []
+        for part in modification_date.split(','):
+            part = part.strip()
+            temp_conditions.append("Modification Date LIKE %s")
+            parameters.append('%' + part + '%')
+        conditions.append(" OR ".join(temp_conditions))
+    '''
+    if species != "":
+        temp_conditions = []
+        for part in species.split(','):
+            part = part.strip()
+            temp_conditions.append("Species LIKE %s")
+            parameters.append('%' + part + '%')
+        conditions.append(" OR ".join(temp_conditions))
+    if genome_length != "":
+        temp_conditions = []
+        for part in genome_length.split(','):
+            part = part.strip()
+            if part.isdigit():
+                temp_conditions.append("Genome_Length_Bp > %s")
+                parameters.append('%' + part + '%')
+        conditions.append(" OR ".join(temp_conditions))
+
+    if conditions:
+        query += " WHERE " + " AND ".join(conditions)
+        app.logger.info(query)
+        app.logger.info(parameters)
+
+    generic_query = query
+    generic_parameters = parameters
+
+    return render_template('advanced_search.html')
+
+@app.route('/advanced_search_result', methods=['GET','POST'])
+def advanced_search_result():
+    search_query = request.args.get('search_query', '')  # Get the search term from the query parameters
+    cur = mysql.connection.cursor()
+
+    # Base SQL query
+    query = generic_query
+    conditions = []
+    parameters = generic_parameters
+    app.logger.info(generic_query)
+    app.logger.info(generic_parameters)
+
+    
+    cur.execute(query, parameters)
+    genomes = cur.fetchall()
+    cur.close()
+
+    # Pass the genomes data to the template
+    return render_template('index.html', genomes=genomes)
+
+
+    #cur.execute(query, parameters)
+    #genomes = cur.fetchall()
+    #cur.close()
+
+    #return render_template('index.html', genomes=genomes)
+
+
+    '''
+    if family != "":
+        temp_conditions = []
+        for part in family.split(','):
+            part = part.strip()
+            temp_conditions.append("Species LIKE %s")
+            parameters.append('%' + part + '%')
+        conditions.append(" OR ".join(temp_conditions))
+    '''
+
+
 
 
 #main method

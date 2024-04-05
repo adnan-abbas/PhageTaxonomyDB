@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <style>
+       
+       .container {
+            max-width: 800px; /* Set maximum width to prevent form from stretching too wide */
+            margin: auto; /* Center the form horizontally */
+        }
+    </style>
+</head>
+<body>
+    {% extends "layout.html" %}
+    <!-- Begin page content -->
+    {% block content %}
+    <main class="flex-shrink-0">
+        <div class="container">
+            <h1 class="mt-5">Advanced Search  &#x25B4;</h1>
+            <p class="lead"> Select what you would like to search for below:</p>
+            <form id="insert-form" method="POST" action="/advanced_search">
+                <div class="form-group">
+                    <label for="accession-id">Accession ID</label>
+                    <input type="text" name="accession_id" class="form-control" id="accession-id" value = "">
+                </div>
+                <div class="form-group">
+                    <label for="species">Species</label>
+                    <input type="text" name="species" class="form-control" id="species" value="">
+                </div>
+                <div class="form-group">
+                    <label for="genome-length">Genome Length</label>
+                    <input type="text" name="genome_length" class="form-control" id="genome-length" value="">
+                </div>
+                <div class="form-group">
+                    <label for="sequence">Sequence</label>
+                    <textarea name="sequence" class="form-control" id="sequence" value=""></textarea>
+                </div>
+                <br>
+                </br>
+                <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </main>
+
+    <script>
+        $(document).ready(function() {
+            $('#insert-form').submit(function(e) {
+                e.preventDefault(); // Prevent the form from submitting normally
+                function formatDate(dateString) {
+                    var date = new Date(dateString);
+                    var year = date.getFullYear();
+                    var month = ('0' + (date.getMonth() + 1)).slice(-2);
+                    var day = ('0' + date.getDate()).slice(-2);
+                    return year + '-' + month + '-' + day;
+                }
+
+                var formData = {
+                    'accession_id': $('#accession-id').val(),
+                    'species': $('#species').val(),
+                    'genome_length': $('#genome-length').val(),
+                    'sequence': $('#sequence').val()
+
+                };
+                $.ajax({
+                type: "POST",
+                url: "/advanced_search_post",
+                data: formData,
+                success: function (data) {
+                    window.location.href = '/advanced_search_result';
+                    //provide a scrollable modal here to verify if this is what the user wants to add
+
+                }
+            });
+            });
+        });
+    </script>
+
+</body>
+
+</html>
+
+<!-- 'accession_id': something,
+'genome_length': something,
+'modification_date': something,
+'sequence': something, 
+'species': something,
+'family':something,
+'genus':something,
+'orders':something,
+'classification':something,
+'mol_gc':something,
+'neg_strand':something,
+'num_CDS':something,
+'pos_strand':something,
+'tRNAs':something,
+'host':something, -->
+{% endblock %}
