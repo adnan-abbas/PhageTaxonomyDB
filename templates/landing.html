@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<body class="bg-white text-black">
+    {% extends "layout.html" %}
+    <!-- Begin page content -->
+    {% block content %}
+
+    <main class="flex-shrink-0">
+
+        <div class="container">
+          <h1 id="emojify" title=""  style="position: absolute; top: 10px; right: 20px;"></h1>
+            <h1 class="text-center mt-5">Welcome to Phage Taxonomy Database &#x2699;</h1>
+        </div>  
+
+         <div class="d-flex h-100 p-3 mx-auto flex-column">
+          <header>
+            
+              <nav class="nav justify-content-center ">
+                <p class="lead mt-4" style="margin: 0 auto;
+                margin-top: 1rem;
+                padding: 1rem 2rem;">
+                    <a href="{{ url_for('register') }}" class="btn btn-secondary btn-lg">Sign up</a>
+                    <a href="{{ url_for('login') }}" class="btn btn-secondary btn-lg">Log in</a>
+                    <a href="{{ url_for('index') }}" class="btn btn-secondary btn-lg">Continue as guest</a>
+                </p>
+                
+              </nav>
+
+          </header>
+        </div>    
+        
+    </main>
+ 
+    {% endblock %}
+</body>

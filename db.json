@@ -1,7 +1,0 @@
-{
-  "mysql_host": "localhost",
-  "mysql_user": "root",
-  "mysql_password": "jester101",
-  "mysql_db": "phage_db"
-}
-  

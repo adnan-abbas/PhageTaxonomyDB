@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends "layout.html" %}
+<!-- Begin page content -->
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Genomic Data Analysis</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-4">
+    <h1>Enhanced Genomic Data Analysis</h1>
+
+    <h2>Genome Length Insights</h2>
+    <p>Minimum Length: {{ genome_length_insights[0] }}</p>
+    <p>Maximum Length: {{ genome_length_insights[1] }}</p>
+    <p>Average Length: {{ genome_length_insights[2] }}</p>
+    <p>Total Genomes: {{ genome_length_insights[3] }}</p>
+    <p>Sum of Lengths: {{ genome_length_insights[4] }}</p>
+
+    <h2>GC Content Insights</h2>
+    <p>Minimum GC Content: {{ gc_content_insights[0] }}</p>
+    <p>Maximum GC Content: {{ gc_content_insights[1] }}</p>
+    <p>Average GC Content: {{ gc_content_insights[2] }}</p>
+    <p>Count: {{ gc_content_insights[3] }}</p>
+    <p>Total GC Content: {{ gc_content_insights[4] }}</p>
+
+    <h2>CDS Insights</h2>
+    <p>Minimum CDS: {{ cds_insights[0] }}</p>
+    <p>Maximum CDS: {{ cds_insights[1] }}</p>
+    <p>Average CDS: {{ cds_insights[2] }}</p>
+    <p>Total CDS: {{ cds_insights[4] }}</p>
+
+    <h2>Genomes Distribution by Genus</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Genus</th>
+                <th>Number of Genomes</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for genus, count in genomes_per_genus %}
+            <tr>
+                <td>{{ genus }}</td>
+                <td>{{ count }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Species Insights</h2>
+    <p>Total Number of Unique Species: {{ total_species }}</p>
+
+    <h2>Distribution of Species Across Families</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Family</th>
+                <th>Number of Unique Species</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for family, count in species_per_family %}
+            <tr>
+                <td>{{ family }}</td>
+                <td>{{ count }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Average Genome Length per Species</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Species</th>
+                <th>Average Genome Length (bp)</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for species, avg_length in avg_genome_length_per_species %}
+            <tr>
+                <td>{{ species }}</td>
+                <td>{{ avg_length }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+{% endblock %}
+</html>
+
+
+
+
