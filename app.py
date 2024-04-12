@@ -138,11 +138,11 @@ def index():
         if conditions:
             query += " WHERE " + " AND ".join(conditions)
 
-    if session['advanced_command']:
-        query = session['advanced_command']
+    #if session['advanced_command']:
+    #    query = session['advanced_command']
 
-    if session['advanced_parameters']:
-        parameters = session['advanced_parameters']
+    #if session['advanced_parameters']:
+    #    parameters = session['advanced_parameters']
 
     
     cur.execute(query, parameters)
