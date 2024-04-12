@@ -138,6 +138,12 @@ def index():
         if conditions:
             query += " WHERE " + " AND ".join(conditions)
 
+    if session['advanced_command']:
+        query = session['advanced_command']
+
+    if session['advanced_parameters']:
+        parameters = session['advanced_parameters']
+
     
     cur.execute(query, parameters)
     genomes = cur.fetchall()
@@ -531,10 +537,13 @@ def advanced_search_post():
         app.logger.info(query)
         app.logger.info(parameters)
 
-    generic_query = query
-    generic_parameters = parameters
+    #generic_query = query
+    #generic_parameters = parameters
 
-    return render_template('advanced_search.html')
+    session['advanced_command'] = query
+    session['advanced_parameters'] = parameters
+
+    return render_template('index.html')
 
 @app.route('/advanced_search_result', methods=['GET','POST'])
 def advanced_search_result():
