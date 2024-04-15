@@ -32,6 +32,9 @@ bcrypt = Bcrypt(app)
  
 @app.route('/', methods=['GET', 'POST'])
 def landing():
+    if session and (session['role'] == "admin" or session['role'] == "researcher"):
+        return redirect(url_for('index'))
+
     return render_template('landing.html')
 
 
@@ -104,9 +107,20 @@ def login():
 
     return render_template('login.html')
 
+@app.route('/logout')
+def logout():
+    # Clear the session
+    session.clear()
+    session['role'] = 'guest'
+    # Redirect to the login page
+    return redirect(url_for('landing'))
+
 
 @app.route('/index', methods=['GET', 'POST'])
 def index():
+    #if the session has not been set, i.e. the user has not logged in
+    if (not session):
+        session['role'] = 'guest'
     search_query = request.args.get('search_query', '')  # Get the search term from the query parameters
     cur = mysql.connection.cursor()
 
@@ -152,9 +166,9 @@ def index():
     # Pass the genomes data to the template
     return render_template('index.html', genomes=genomes)
 
-@app.route('/admin_login', methods = ['POST', 'GET'])
-def admin_login():
-    return render_template('admin_login.html')
+@app.route('/admin_settings', methods = ['POST', 'GET'])
+def admin_settings():
+    return render_template('admin_settings.html')
 
 @app.route('/update_data', methods = ['POST', 'GET'])
 def update_data():

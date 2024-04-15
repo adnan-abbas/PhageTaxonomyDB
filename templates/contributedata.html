@@ -21,7 +21,9 @@
                 margin-top: 1rem;
                 padding: 1rem 2rem;">
                     <a href="{{ url_for('insert_data') }}" class="btn btn-secondary btn-lg">Insert Data</a>
+                    {% if session['role'] == 'admin' %}
                     <a href="{{ url_for('view') }}" class="btn btn-secondary btn-lg">Update/Delete Data</a>
+                    {% endif %}
                 </p>
                 <span class="border border-dark rounded mt-5 p-3 w-75  margin: 0 auto;
                 padding: 1rem;">
@@ -31,12 +33,14 @@
                       <li>
                         Insert Data: You can insert the phage genome data by clicking here.
                       </li>
+                      {% if session['role'] == 'admin' %}
                       <li>
                         Update Data: You can update existing data in the database by clicking here.
                       </li>
                       <li>
                         Delete Data: You can delete the phage genome entries from the database by clicking here.
                       </li>
+                      {% endif %}
                     </ul>
                  
 
