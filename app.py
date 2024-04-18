@@ -433,21 +433,21 @@ def data_statistics():
     # Genomic Length Insights
     cur.execute("""
         SELECT MIN(Genome_Length), MAX(Genome_Length), AVG(Genome_Length), COUNT(*), SUM(Genome_Length)
-        FROM excel_file
+        FROM genome
     """)
     genome_length_insights = cur.fetchone()
 
     # GC Content Insights for Features (if applicable)
     cur.execute("""
         SELECT MIN(molGC_perc), MAX(molGC_perc), AVG(molGC_perc), COUNT(*), SUM(molGC_perc)
-        FROM excel_file
+        FROM features
     """)
     gc_content_insights = cur.fetchone()
 
     # Detailed Features Statistics (e.g., for number_cds)
     cur.execute("""
         SELECT MIN(Number_CDS), MAX(Number_CDS), AVG(Number_CDS), COUNT(*), SUM(Number_CDS)
-        FROM excel_file
+        FROM features
     """)
     cds_insights = cur.fetchone()
 
@@ -474,8 +474,8 @@ def data_statistics():
     # Average genome length per species (if applicable)
     cur.execute("""
         SELECT taxonomy.species, AVG(genome_length) AS avg_length
-        FROM excel_file
-        JOIN taxonomy ON excel_file.Descriptions = taxonomy.species
+        FROM genome
+        JOIN taxonomy ON genome.species = taxonomy.species
         GROUP BY taxonomy.species
     """)
     avg_genome_length_per_species = cur.fetchall()
