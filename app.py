@@ -28,7 +28,6 @@ generic_query = "SELECT * FROM genome"
 generic_parameters = []
 
 bcrypt = Bcrypt(app)
-
  
 @app.route('/', methods=['GET', 'POST'])
 def landing():
@@ -84,6 +83,12 @@ def register():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    try:
+        cur = mysql.connection.cursor()
+        # Your code here
+    except AttributeError as e:
+        app.logger.error("Error: Unable to connect to the database or get the cursor")
+        return "Database connection is not established", 500
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
@@ -427,22 +432,22 @@ def data_statistics():
 
     # Genomic Length Insights
     cur.execute("""
-        SELECT MIN('genome_length'), MAX('genome_length'), AVG('genome_length'), COUNT(*), SUM('genome_length')
-        FROM genome
+        SELECT MIN(Genome_Length), MAX(Genome_Length), AVG(Genome_Length), COUNT(*), SUM(Genome_Length)
+        FROM excel_file
     """)
     genome_length_insights = cur.fetchone()
 
     # GC Content Insights for Features (if applicable)
     cur.execute("""
-        SELECT MIN('mol_gc'), MAX('mol_gc'), AVG('mol_gc'), COUNT(*), SUM('mol_gc')
-        FROM features
+        SELECT MIN(molGC_perc), MAX(molGC_perc), AVG(molGC_perc), COUNT(*), SUM(molGC_perc)
+        FROM excel_file
     """)
     gc_content_insights = cur.fetchone()
 
     # Detailed Features Statistics (e.g., for number_cds)
     cur.execute("""
-        SELECT MIN('number_cds'), MAX('number_cds'), AVG('number_cds'), COUNT(*), SUM('number_cds')
-        FROM features
+        SELECT MIN(Number_CDS), MAX(Number_CDS), AVG(Number_CDS), COUNT(*), SUM(Number_CDS)
+        FROM excel_file
     """)
     cds_insights = cur.fetchone()
 
@@ -468,9 +473,9 @@ def data_statistics():
 
     # Average genome length per species (if applicable)
     cur.execute("""
-        SELECT taxonomy.species, AVG('genome_length') AS avg_length
-        FROM genome
-        JOIN taxonomy ON genome.species = taxonomy.species
+        SELECT taxonomy.species, AVG(genome_length) AS avg_length
+        FROM excel_file
+        JOIN taxonomy ON excel_file.Descriptions = taxonomy.species
         GROUP BY taxonomy.species
     """)
     avg_genome_length_per_species = cur.fetchall()

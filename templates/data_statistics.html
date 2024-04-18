@@ -1,101 +1,337 @@
 <!DOCTYPE html>
 <html lang="en">
 {% extends "layout.html" %}
-<!-- Begin page content -->
 {% block content %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enhanced Genomic Data Analysis</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.8.0"></script>
 </head>
 <body>
 <div class="container mt-4">
     <h1>Enhanced Genomic Data Analysis</h1>
 
     <h2>Genome Length Insights</h2>
-    <p>Minimum Length: {{ genome_length_insights[0] }}</p>
-    <p>Maximum Length: {{ genome_length_insights[1] }}</p>
-    <p>Average Length: {{ genome_length_insights[2] }}</p>
-    <p>Total Genomes: {{ genome_length_insights[3] }}</p>
-    <p>Sum of Lengths: {{ genome_length_insights[4] }}</p>
+    <canvas id="genomeLengthChart" width="400" height="200"></canvas>
+
+    <h2>Total Genomes</h2>
+    <canvas id="totalGenomesChart" style="max-width: 200px; max-height: 200px;"></canvas>
 
     <h2>GC Content Insights</h2>
-    <p>Minimum GC Content: {{ gc_content_insights[0] }}</p>
-    <p>Maximum GC Content: {{ gc_content_insights[1] }}</p>
-    <p>Average GC Content: {{ gc_content_insights[2] }}</p>
-    <p>Count: {{ gc_content_insights[3] }}</p>
-    <p>Total GC Content: {{ gc_content_insights[4] }}</p>
+    <canvas id="gcContentChart" width="400" height="200"></canvas>
+
+    <h2>Total GC Content</h2>
+    <canvas id="totalGCContentChart" style="max-width: 200px; max-height: 200px;"></canvas>
 
     <h2>CDS Insights</h2>
-    <p>Minimum CDS: {{ cds_insights[0] }}</p>
-    <p>Maximum CDS: {{ cds_insights[1] }}</p>
-    <p>Average CDS: {{ cds_insights[2] }}</p>
-    <p>Total CDS: {{ cds_insights[4] }}</p>
+    <canvas id="cdsChart" width="400" height="200"></canvas>
+
+    <h2>Total CDS</h2>
+    <canvas id="totalCDSChart" style="max-width: 200px; max-height: 200px;"></canvas>
 
     <h2>Genomes Distribution by Genus</h2>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Genus</th>
-                <th>Number of Genomes</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for genus, count in genomes_per_genus %}
-            <tr>
-                <td>{{ genus }}</td>
-                <td>{{ count }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <canvas id="genusDistributionChart" width="400" height="200"></canvas>
 
     <h2>Species Insights</h2>
-    <p>Total Number of Unique Species: {{ total_species }}</p>
+    <canvas id="speciesChart" style="max-width: 200px; max-height: 200px;"></canvas>
 
     <h2>Distribution of Species Across Families</h2>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Family</th>
-                <th>Number of Unique Species</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for family, count in species_per_family %}
-            <tr>
-                <td>{{ family }}</td>
-                <td>{{ count }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <canvas id="speciesFamilyChart" width="400" height="200"></canvas>
 
     <h2>Average Genome Length per Species</h2>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Species</th>
-                <th>Average Genome Length (bp)</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for species, avg_length in avg_genome_length_per_species %}
-            <tr>
-                <td>{{ species }}</td>
-                <td>{{ avg_length }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
+    <canvas id="avgGenomeLengthChart" width="400" height="200"></canvas>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var ctxGenus = document.getElementById('genusDistributionChart').getContext('2d');
+    var genusDistributionChart = new Chart(ctxGenus, {
+      type: 'bar',
+      data: {
+        labels: [{% for genus, count in genomes_per_genus %}"{{ genus }}",{% endfor %}],
+        datasets: [{
+          label: 'Number of Genomes',
+          data: [{% for genus, count in genomes_per_genus %}{{ count }},{% endfor %}],
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderColor: 'rgba(255, 99, 132, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    var ctxTotalGenomes = document.getElementById('totalGenomesChart').getContext('2d');
+    var totalGenomes = {{ genome_length_insights[3] }};  // This assumes genome_length_insights[3] holds the total genomes count
+    var totalGenomesChart = new Chart(ctxTotalGenomes, {
+    type: 'doughnut',
+    data: {
+        labels: ['Total Genomes'],
+        datasets: [{
+        label: 'Total Genomes',
+        data: [totalGenomes],
+        backgroundColor: ['rgba(54, 162, 235, 0.5)'],
+        borderColor: ['rgba(54, 162, 235, 1)'],
+        borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+        legend: {
+            display: true,
+            position: 'top',
+            labels: {
+            boxWidth: 10,
+            padding: 10
+            }
+        },
+        tooltip: {
+            enabled: true,
+            callbacks: {
+            label: function(tooltipItem) {
+                return tooltipItem.label + ": " + tooltipItem.raw;
+            }
+            }
+        }
+        }
+    }
+    });
+
+    var ctxLength = document.getElementById('genomeLengthChart').getContext('2d');
+    var genomeLengthChart = new Chart(ctxLength, {
+      type: 'bar',
+      data: {
+        labels: ['Minimum Length', 'Maximum Length', 'Average Length'],
+        datasets: [{
+          label: 'Genome Length (bp)',
+          data: [{{ genome_length_insights[0] }}, {{ genome_length_insights[1] }}, {{ genome_length_insights[2] }}],
+          backgroundColor: ['rgba(75, 192, 192, 0.2)', 'rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)'],
+          borderColor: ['rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)'],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    var ctxGC = document.getElementById('gcContentChart').getContext('2d');
+    var gcContentChart = new Chart(ctxGC, {
+      type: 'bar',
+      data: {
+        labels: ['Minimum GC', 'Maximum GC', 'Average GC'],
+        datasets: [{
+          label: 'GC Content (%)',
+          data: [{{ gc_content_insights[0] }}, {{ gc_content_insights[1] }}, {{ gc_content_insights[2] }}],
+          backgroundColor: ['rgba(255, 206, 86, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 99, 132, 0.2)'],
+          borderColor: ['rgba(255, 206, 86, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)'],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    var ctxTotalGCContent = document.getElementById('totalGCContentChart').getContext('2d');
+    var totalGCContent = {{ gc_content_insights[4] }};  // Assuming gc_content_insights[4] holds the total GC content
+    var totalGCContentChart = new Chart(ctxTotalGCContent, {
+    type: 'doughnut',
+    data: {
+        labels: ['Total GC Content'],
+        datasets: [{
+        label: 'Total GC Content',
+        data: [totalGCContent],
+        backgroundColor: ['rgba(75, 192, 192, 0.5)'],
+        borderColor: ['rgba(75, 192, 192, 1)'],
+        borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+        legend: {
+            display: true,
+            position: 'top',
+            labels: {
+            boxWidth: 10,
+            padding: 10
+            }
+        },
+        tooltip: {
+            enabled: true,
+            callbacks: {
+            label: function(tooltipItem) {
+                return tooltipItem.label + ": " + tooltipItem.raw;
+            }
+            }
+        }
+        }
+    }
+    });
+
+    var ctxCDS = document.getElementById('cdsChart').getContext('2d');
+    var cdsChart = new Chart(ctxCDS, {
+    type: 'bar',
+    data: {
+        labels: ['Minimum CDS', 'Maximum CDS', 'Average CDS'],
+        datasets: [{
+        label: 'CDS Count',
+        data: [{{ cds_insights[0] }}, {{ cds_insights[1] }}, {{ cds_insights[2] }}],
+        backgroundColor: 'rgba(153, 102, 255, 0.2)',
+        borderColor: 'rgba(153, 102, 255, 1)',
+        borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+        y: {
+            beginAtZero: true
+        }
+        }
+    }
+    });
+
+    var ctxTotalCDS = document.getElementById('totalCDSChart').getContext('2d');
+    var totalCDS = {{ cds_insights[4] }};  // This assumes cds_insights[4] holds the total count of CDS
+    var totalCDSChart = new Chart(ctxTotalCDS, {
+    type: 'doughnut',
+    data: {
+        labels: ['Total CDS'],
+        datasets: [{
+        label: 'Total CDS',
+        data: [totalCDS],
+        backgroundColor: ['rgba(255, 99, 132, 0.5)'],
+        borderColor: ['rgba(255, 99, 132, 1)'],
+        borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+        legend: {
+            display: true,
+            position: 'top',
+            labels: {
+            boxWidth: 10,
+            padding: 10
+            }
+        },
+        tooltip: {
+            enabled: true,
+            callbacks: {
+            label: function(tooltipItem) {
+                return tooltipItem.label + ": " + tooltipItem.raw;
+            }
+            }
+        }
+        }
+    }
+    });
+
+    var ctxSpecies = document.getElementById('speciesChart').getContext('2d');
+    var totalSpecies = {{ total_species }}; // Ensure this variable is correctly passed from Flask
+    var speciesChart = new Chart(ctxSpecies, {
+    type: 'doughnut',
+    data: {
+        labels: ['Total Number of Species'],
+        datasets: [{
+        label: 'Total Species',
+        data: [totalSpecies],
+        backgroundColor: ['rgba(255, 159, 64, 0.5)'],
+        borderColor: ['rgba(255, 159, 64, 1)'],
+        borderWidth: 1
+        }]
+    },
+    options: {
+        plugins: {
+        legend: {
+            display: true,
+            position: 'top'
+        },
+        tooltip: {
+            enabled: true,
+            callbacks: {
+            label: function(tooltipItem) {
+                return tooltipItem.label + ": " + tooltipItem.raw;
+            }
+            }
+        }
+        }
+    }
+    });
+
+    var ctxFamily = document.getElementById('speciesFamilyChart').getContext('2d');
+    var familyChart = new Chart(ctxFamily, {
+    type: 'bar',
+    data: {
+        labels: [{% for family, count in species_per_family %}"{{ family }}",{% endfor %}],
+        datasets: [{
+        label: 'Number of Species',
+        data: [{% for family, count in species_per_family %}{{ count }},{% endfor %}],
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+        y: {
+            beginAtZero: true
+        }
+        }
+    }
+    });
+
+    var ctxAvgLength = document.getElementById('avgGenomeLengthChart').getContext('2d');
+    var avgLengthChart = new Chart(ctxAvgLength, {
+    type: 'bar',
+    data: {
+        labels: [{% for species, avg_length in avg_genome_length_per_species %}"{{ species }}",{% endfor %}],
+        datasets: [{
+        label: 'Average Genome Length (bp)',
+        data: [{% for species, avg_length in avg_genome_length_per_species %}{{ avg_length }},{% endfor %}],
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+        y: {
+            beginAtZero: true
+        }
+        }
+    }
+    });
+
+
+
+
+});
+</script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 {% endblock %}
 </html>
-
 
 
 
