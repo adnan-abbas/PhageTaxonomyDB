@@ -25,10 +25,10 @@ DROP TABLE IF EXISTS `features`;
 CREATE TABLE `features` (
   `Accession` varchar(45) NOT NULL,
   `Classification` text,
-  `molGC (%)` double DEFAULT NULL,
-  `Number CDS` int DEFAULT NULL,
-  `Positive Strand (%)` double DEFAULT NULL,
-  `Negative Strand (%)` double DEFAULT NULL,
+  `molGC_perc` double DEFAULT NULL,
+  `Number_CDS` int DEFAULT NULL,
+  `Positive_Strand_perc` double DEFAULT NULL,
+  `Negative_Strand_perc` double DEFAULT NULL,
   `tRNAs` int DEFAULT NULL,
   PRIMARY KEY (`Accession`),
   CONSTRAINT `feature_genome_fk` FOREIGN KEY (`Accession`) REFERENCES `genome` (`Accession`)
@@ -55,8 +55,8 @@ DROP TABLE IF EXISTS `genome`;
 CREATE TABLE `genome` (
   `Accession` varchar(45) NOT NULL,
   `Species` varchar(45) DEFAULT NULL,
-  `Genome Length (bp)` int DEFAULT NULL,
-  `Modification Date` date DEFAULT NULL,
+  `Genome_Length` int DEFAULT NULL,
+  `Modification_Date` date DEFAULT NULL,
   `Sequence` text,
   PRIMARY KEY (`Accession`),
   UNIQUE KEY `Accession_UNIQUE` (`Accession`),
