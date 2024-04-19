@@ -1,5 +1,22 @@
 <!DOCTYPE html>
 <style>
+/* fixed sisdebar */
+#sidebar {
+    position: fixed; /* Keep sidebar fixed at its position */
+    top: 0;          /* Start from the top of the viewport */
+    left: 0;
+    width: 250px;    /* Adjust width as necessary */
+    height: 100%;    /* Optional: make sidebar full height */
+    z-index: 1000;   /* Ensures sidebar stays on top of other content */
+}
+/* Main content area */
+main {
+    margin-left: 250px;  /* Push the main content to the right of the sidebar */
+    width: calc(100% - 250px); /* Adjust the width to take into account the sidebar */
+}
+
+
+
     #sidebar a:link,
     #sidebar a:visited {
         color: white;
@@ -82,6 +99,8 @@
   margin: 0 auto;
   padding: 1rem;
 } */
+
+
 </style>
 <html>
 
@@ -102,6 +121,8 @@
         crossorigin="anonymous"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+
+
 </head>
 
 <body>
