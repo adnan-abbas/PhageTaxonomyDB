@@ -89,6 +89,8 @@ main {
         overflow: hidden;
     }
 
+
+
     /* .lead {
     margin: 0 auto;
     margin-top: 1rem;
@@ -188,12 +190,11 @@ main {
                     <ul class="nav flex-column mb-2 fs-3">
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('admin_settings') }}">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-server">
-                                    <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
-                                    <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
-                                    <line x1="6" y1="6" x2="6" y2="6"></line>
-                                    <line x1="6" y1="18" x2="6" y2="18"></line>
-                                  </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-settings">
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                    <path d="M19.4 15a9 9 0 0 1-2.34 2.34l-1.29-2.23a3 3 0 0 0-2.58-1.44h-3.37a3 3 0 0 0-2.58 1.44L6.94 17.4A9 9 0 0 1 4 15V10a9 9 0 0 1 2.34-2.34l1.29 2.23a3 3 0 0 0 2.58 1.44h3.37a3 3 0 0 0 2.58-1.44l1.29-2.23A9 9 0 0 1 20 10z" fill="none"></path>
+                                </svg>
+                                
                                 Settings
                             </a>
                         </li>
@@ -201,24 +202,19 @@ main {
                     {% endif %}
 
                     {% if session['role'] == 'researcher' or session['role'] == 'admin' %}
-                    <!-- Add this div to create a flex container -->
-                    <div class="d-flex flex-column flex-grow-1">
-                        <!-- Sidebar content -->
-                    </div>
-                    <ul class="nav flex-column mt-auto">
+
+                    <ul class="nav flex-column mb-2 fs-3">
                         <li class="nav-item">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" width="24" height="24" fill="none"
-                             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M3 21h6v-2H3v-16h6V3l8 8-8 8V13H3zm14-7h-8v2h8v4h2v-10h-2z"/>
-                            </svg>
                             <a class="nav-link" href="#" id="logoutLink">
-                                Logout
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="feather feather-log-out">
+                                    <path d="M4 12h14m-7-8l-8 8 8 8" fill="white"></path>
+                                </svg>
+                                Logout 
                             </a>
                         </li>
                     </ul>
                     {% endif %}
-
+                
 
 
 

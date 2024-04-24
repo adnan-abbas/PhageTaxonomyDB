@@ -121,6 +121,59 @@ def logout():
     return redirect(url_for('landing'))
 
 
+@app.route('/add_admin', methods=['GET', 'POST'])
+def add_admin():
+    
+    try:
+        cur = mysql.connection.cursor()
+        # Your code here
+    except AttributeError as e:
+        app.logger.error("Error: Unable to connect to the database or get the cursor")
+        return "Database connection is not established", 500
+
+
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * FROM users WHERE email = %s", (email,))
+        existing_user = cur.fetchone()
+        cur.close()
+
+        if existing_user:
+            flash('Email already exists. Please choose a different email.', 'error')
+            return redirect(url_for('add_admin'))
+
+
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+            flash('Invalid email format. Please enter a valid email address.', 'error')
+            return redirect(url_for('add_admin'))
+
+        if len(password) < 8:
+            flash('Password must be at least 8 characters long.', 'error')
+            return redirect(url_for('add_admin'))
+
+
+        # Check if passwords match
+        if password != confirm_password:
+            flash('Passwords do not match. Please try again.', 'error')
+            return redirect(url_for('add_admin'))
+
+        # Hash the password
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+        # Save the user to the database
+        cur = mysql.connection.cursor()
+        cur.execute("INSERT INTO users (email, password_hash, role) VALUES (%s, %s, 'admin')", (email, hashed_password))
+        mysql.connection.commit()
+        cur.close()
+
+        flash('New admin registration successful!.', 'success')
+        return redirect(url_for('add_admin'))
+    return render_template('admin_settings.html')  # Render the form template if not a POST request
+
 @app.route('/index', methods=['GET', 'POST'])
 def index():
     #if the session has not been set, i.e. the user has not logged in
@@ -161,7 +214,7 @@ def index():
         query = session['advanced_command']
 
     if session.get('advanced_parameters'):
-        parameters = session('advanced_parameters')
+        parameters = session['advanced_parameters']
 
     
     cur.execute(query, parameters)
