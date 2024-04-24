@@ -661,6 +661,12 @@ def advanced_search_result():
         conditions.append(" OR ".join(temp_conditions))
     '''
 
+@app.route('/advanced_search_clear', methods=['POST'])
+def advanced_search_clear():
+    session.pop('advanced_command')
+    session.pop('advanced_parameters')
+    return render_template('index.html')
+
 
 
 

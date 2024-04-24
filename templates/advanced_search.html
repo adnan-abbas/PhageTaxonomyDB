@@ -38,6 +38,7 @@
                 <br>
                 </br>
                 <button type="submit" class="btn btn-primary">Search</button>
+                <button type="button" id = "btn2" class="btn btn-primary">Clear All Filters</button>
         </div>
     </main>
 
@@ -65,12 +66,21 @@
                 url: "/advanced_search_post",
                 data: formData,
                 success: function (data) {
-                    window.location.href = '/advanced_search_result';
+                    window.location.href = '/index';
                     //provide a scrollable modal here to verify if this is what the user wants to add
 
                 }
             });
             });
+            document.getElementById('btn2').onclick = function() {
+                $.ajax({
+                    type: "POST",
+                    url: "/advanced_search_clear",
+                    success: function (data) {
+                        window.location.href = '/index';
+                    }
+                });
+            };
         });
     </script>
 
