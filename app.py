@@ -101,6 +101,12 @@ def login():
 
         if user and bcrypt.check_password_hash(user[2], password):
             # Store user information in session
+            print(user[3])
+            print(request.form['action'])
+            if request.form['action'] == 'login_as_admin' and user[3]!='admin':
+                flash('You are not an Admin, please click the Login button','error')
+                return redirect(url_for('login'))
+
             session['user_id'] = user[0]
             session['email'] = user[1]
             session['role'] = user[3]
