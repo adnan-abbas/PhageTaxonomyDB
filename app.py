@@ -669,8 +669,60 @@ def advanced_search_clear():
 
     if session.get('advanced_parameters'):
         session.pop('advanced_parameters')
-    
+
     return render_template('index.html')
+
+@app.route('/advanced_search_table', methods=['GET', 'POST'])
+def index():
+    #if the session has not been set, i.e. the user has not logged in
+    if (not session):
+        session['role'] = 'guest'
+    search_query = request.args.get('search_query', '')  # Get the search term from the query parameters
+    cur = mysql.connection.cursor()
+
+    # Base SQL query
+
+
+    query = "SELECT * FROM genome LEFT JOIN features ON genome.Accession=features.Accession LEFT JOIN taxonomy ON genome.Species=taxonomy.Species LEFT JOIN species_attacks ON genome.Species=species_attacks.Species LEFT JOIN host ON species_attacks.Host = host.BactID"
+    conditions = []
+    parameters = []
+
+    # Split the search query based on ','
+    if search_query:
+        for part in search_query.split(','):
+            part = part.strip()
+            # Check if the part follows the pattern for different searches
+            if part.lower().startswith('species:'):
+                species = part.split(':', 1)[1].strip()
+                conditions.append("species LIKE %s")
+                parameters.append('%' + species + '%')
+            elif part.lower().startswith('length:>'):
+                length = part.split(':', 1)[1].strip()
+                if length.isdigit():  # Making sure the input is a number
+                    conditions.append("genome_length > %s")
+                    parameters.append(length)
+            elif part.lower().startswith('accession:'):
+                accession = part.split(':', 1)[1].strip()
+                conditions.append("accession_id LIKE %s")
+                parameters.append('%' + accession + '%')
+            # Add more conditions based on the input pattern
+
+        if conditions:
+            query += " WHERE " + " AND ".join(conditions)
+
+    #if session.get('advanced_command'):
+    #    query = session['advanced_command']
+
+    #if session.get('advanced_parameters'):
+    #    parameters = session['advanced_parameters']
+
+    
+    cur.execute(query, parameters)
+    genomes = cur.fetchall()
+    cur.close()
+
+    # Pass the genomes data to the template
+    return render_template('index.html', genomes=genomes)
 
 
 
