@@ -673,7 +673,7 @@ def advanced_search_clear():
     return render_template('index.html')
 
 @app.route('/advanced_search_table', methods=['GET', 'POST'])
-def index():
+def advanced_search_table():
     #if the session has not been set, i.e. the user has not logged in
     if (not session):
         session['role'] = 'guest'
