@@ -722,7 +722,7 @@ def index():
     cur.close()
 
     # Pass the genomes data to the template
-    return render_template('index.html', genomes=genomes)
+    return render_template('advanced_search_table.html', genomes=genomes)
 
 
 
