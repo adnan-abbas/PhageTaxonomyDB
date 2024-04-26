@@ -10,7 +10,6 @@ import zipfile
 import tempfile
 from flask_bcrypt import Bcrypt
 import re
-from similarity import calculate_similarity
 
 app = Flask(__name__)
 with open('db.json') as config_file:
@@ -565,9 +564,8 @@ def advanced_search_post():
     conditions = []
     parameters = []
 
-        #this data is coming from insertdata.html AJAX POST call
+    #this data is coming from insertdata.html
     accession_id = request.form['accession_id']
-    genome_sequence = request.form['sequence']
     species = request.form['species']
     genome_length = request.form['genome_length']
     classification = request.form['classification']
@@ -585,13 +583,7 @@ def advanced_search_post():
             part = part.strip()
             temp_conditions.append("genome.Accession LIKE %s")
             parameters.append('%' + part + '%')
-        conditions.append(" OR ".join(temp_conditions))
-    if genome_sequence != "":
-        temp_conditions = []
-        for part in genome_sequence.split(','):
-            part = part.strip()
-            temp_conditions.append("genome.Sequence LIKE %s")
-            parameters.append('%' + part + '%')
+        
         conditions.append(" OR ".join(temp_conditions))
     '''
     if modification_date != "":
@@ -609,15 +601,17 @@ def advanced_search_post():
             temp_conditions.append("genome.Species LIKE %s")
             parameters.append('%' + part + '%')
         conditions.append(" OR ".join(temp_conditions))
+
     if genome_length != "":
         temp_conditions = []
         for part in genome_length.split(','):
             part = part.strip()
             if part.isdigit():
+                print("PARTTTT",part)
                 temp_conditions.append("genome.Genome_Length > %s")
-                temp_conditions.append("Genome_Length > %s")
-                parameters.append('%' + part + '%')
+                parameters.append( part )
         conditions.append(" OR ".join(temp_conditions))
+
     if classification != "":
         temp_conditions = []
         for part in classification.split(','):
@@ -631,7 +625,8 @@ def advanced_search_post():
             part = part.strip()
             if part.replace(".","").isdigit():
                 temp_conditions.append("features.molGC_perc < %s")
-                parameters.append('%' + part + '%')
+                parameters.append( part )
+
         conditions.append(" OR ".join(temp_conditions))
     if molgcmin != "":
         temp_conditions = []
@@ -639,7 +634,7 @@ def advanced_search_post():
             part = part.strip()
             if part.replace(".","").isdigit():
                 temp_conditions.append("features.molGC_perc > %s")
-                parameters.append('%' + part + '%')
+                parameters.append(part)
         conditions.append(" OR ".join(temp_conditions))
     if order != "":
         temp_conditions = []

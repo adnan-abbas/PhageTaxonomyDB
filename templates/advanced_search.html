@@ -18,54 +18,48 @@
         <div class="container">
             <h1 class="mt-5">Advanced Search  &#x25B4;</h1>
             <p class="lead"> Select what you would like to search for below:</p>
-            <form id="insert-form" method="POST" action="/advanced_search">
+            <form id="insert-form" method="POST" action="{{ url_for('advanced_search_post') }}">
                 <div class="form-group">
                     <label for="accession-id">Accession ID</label>
-                    <input type="text" name="accession_id" class="form-control" id="accession-id" value = "">
+                    <input type="text" name="accession_id" class="form-control" id="accession-id" placeholder="Enter accession-id like AE, KC, etc.">
                 </div>
                 <div class="form-group">
                     <label for="species">Species</label>
-                    <input type="text" name="species" class="form-control" id="species" value="">
+                    <input type="text" name="species" class="form-control" id="species" placeholder="Enter the Species">
                 </div>
                 <div class="form-group">
-                    <label for="genome-length">Genome Length (greater than amount imput)</label>
-                    <input type="text" name="genome_length" class="form-control" id="genome-length" value="">
-                </div>
-                <div class="form-group">
-                    <label for="sequence">Sequence</label>
-                    <textarea name="sequence" class="form-control" id="sequence" value=""></textarea>
+                    <label for="genome-length">Genome Length</label>
+                    <input type="text" name="genome_length" class="form-control" id="genome-length" placeholder="Enter the minimum genome length">
                 </div>
                 <div class="form-group">
                     <label for="classification">Classification</label>
-                    <input type="text" name="classification" class="form-control" id="classification" value=""></input>
+                    <input type="text" name="classification" class="form-control" id="classification" placeholder="Enter the classification"></input>
                 </div>
                 <div class="form-group">
                     <label for="molgcmax">MolGC Percent Max</label>
-                    <input type="text" name="molgcmax" class="form-control" id="molgcmax" value=""></input>
+                    <input type="text" name="molgcmax" class="form-control" id="molgcmax" placeholder="Enter the maximum MolGC %"></input>
                 </div>
                 <div class="form-group">
                     <label for="molgcmin">MolGC Percent Min</label>
-                    <input type="text" name="molgcmin" class="form-control" id="molgcmin" value=""></input>
+                    <input type="text" name="molgcmin" class="form-control" id="molgcmin" placeholder="Enter the minimum MolGC %"></input>
                 </div>
                 <div class="form-group">
                     <label for="order">Order</label>
-                    <input type="text" name="order" class="form-control" id="order" value=""></input>
+                    <input type="text" name="order" class="form-control" id="order" placeholder="Enter the Order"></input>
                 </div>
                 <div class="form-group">
                     <label for="family">Family</label>
-                    <input type="text" name="family" class="form-control" id="family" value=""></input>
+                    <input type="text" name="family" class="form-control" id="family" placeholder="Enter the Family"></input>
                 </div>
                 <div class="form-group">
                     <label for="genus">Genus</label>
-                    <input type="text" name="genus" class="form-control" id="genus" value=""></input>
+                    <input type="text" name="genus" class="form-control" id="genus" placeholder="Enter the Genus"></input>
                 </div>
                 <div class="form-group">
                     <label for="host">Host</label>
-                    <input type="text" name="host" class="form-control" id="host" value=""></input>
+                    <input type="text" name="host" class="form-control" id="host" placeholder="Enter the Bacterial Host"></input>
                 </div>
-                    <label for="genome-length">Genome Length</label>
-                    <input type="text" name="genome_length" class="form-control" id="genome-length" value="Enter the minimum length value">
-                </div>
+        
 
                 <br>
                 </br>
@@ -74,7 +68,7 @@
         </div>
     </main>
 
-    <script>
+    <!-- <script>
         $(document).ready(function() {
             $('#insert-form').submit(function(e) {
                 e.preventDefault(); // Prevent the form from submitting normally
@@ -120,7 +114,7 @@
                 });
             };
         });
-    </script>
+    </script> -->
 
 </body>
 
