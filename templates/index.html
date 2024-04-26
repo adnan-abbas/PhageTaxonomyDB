@@ -179,7 +179,7 @@
     
         downloadBtn.addEventListener('click', function() {
             const selectedIds = Array.from(document.querySelectorAll('.rowCheckbox:checked')).map(checkbox => {
-                return checkbox.closest('tr').querySelector('td:nth-child(2)').textContent.trim(); // Assuming Accession ID is in the 2nd column
+                return checkbox.closest('tr').querySelector('td:nth-child(2)').textContent.trim(); // Accession ID is in the 2nd column
             });
     
             if (selectedIds.length > 0) {
@@ -198,7 +198,7 @@
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = "fasta_files.zip"; // Assuming you're sending a ZIP
+                    a.download = "fasta_files.zip"; 
                     document.body.appendChild(a);
                     a.click();    
                     window.URL.revokeObjectURL(url);
