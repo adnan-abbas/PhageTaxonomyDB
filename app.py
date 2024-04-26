@@ -216,11 +216,11 @@ def index():
         if conditions:
             query += " WHERE " + " AND ".join(conditions)
 
-    if session.get('advanced_command'):
-        query = session['advanced_command']
+    #if session.get('advanced_command'):
+    #    query = session['advanced_command']
 
-    if session.get('advanced_parameters'):
-        parameters = session['advanced_parameters']
+    #if session.get('advanced_parameters'):
+    #    parameters = session['advanced_parameters']
 
     
     cur.execute(query, parameters)
@@ -561,7 +561,7 @@ def advanced_search_post():
     cur = mysql.connection.cursor()
 
     # Base SQL query
-    query = "SELECT * FROM genome"
+    query = "SELECT * FROM genome LEFT JOIN features ON genome.Accession=features.Accession LEFT JOIN taxonomy ON genome.Species=taxonomy.Species LEFT JOIN species_attacks ON genome.Species=species_attacks.Species LEFT JOIN host ON species_attacks.Host = host.BactID"
     conditions = []
     parameters = []
 
@@ -570,19 +570,27 @@ def advanced_search_post():
     genome_sequence = request.form['sequence']
     species = request.form['species']
     genome_length = request.form['genome_length']
+    classification = request.form['classification']
+    molgcmax = request.form['molgcmax']
+    molgcmin = request.form['molgcmin']
+    order = request.form['order']
+    family = request.form['family']
+    genus = request.form['genus']
+    host = request.form['host']
+
 
     if accession_id != "":
         temp_conditions = []
         for part in accession_id.split(','):
             part = part.strip()
-            temp_conditions.append("Accession LIKE %s")
+            temp_conditions.append("genome.Accession LIKE %s")
             parameters.append('%' + part + '%')
         conditions.append(" OR ".join(temp_conditions))
     if genome_sequence != "":
         temp_conditions = []
         for part in genome_sequence.split(','):
             part = part.strip()
-            temp_conditions.append("Sequence LIKE %s")
+            temp_conditions.append("genome.Sequence LIKE %s")
             parameters.append('%' + part + '%')
         conditions.append(" OR ".join(temp_conditions))
     '''
@@ -598,7 +606,7 @@ def advanced_search_post():
         temp_conditions = []
         for part in species.split(','):
             part = part.strip()
-            temp_conditions.append("Species LIKE %s")
+            temp_conditions.append("genome.Species LIKE %s")
             parameters.append('%' + part + '%')
         conditions.append(" OR ".join(temp_conditions))
     if genome_length != "":
@@ -606,8 +614,59 @@ def advanced_search_post():
         for part in genome_length.split(','):
             part = part.strip()
             if part.isdigit():
-                temp_conditions.append("Genome_Length_Bp > %s")
+                temp_conditions.append("genome.Genome_Length > %s")
                 parameters.append('%' + part + '%')
+        conditions.append(" OR ".join(temp_conditions))
+    if classification != "":
+        temp_conditions = []
+        for part in classification.split(','):
+            part = part.strip()
+            temp_conditions.append("features.Classification LIKE %s")
+            parameters.append('%' + part + '%')
+        conditions.append(" OR ".join(temp_conditions))
+    if molgcmax != "":
+        temp_conditions = []
+        for part in molgcmax.split(','):
+            part = part.strip()
+            if part.replace(".","").isdigit():
+                temp_conditions.append("features.molGC_perc < %s")
+                parameters.append('%' + part + '%')
+        conditions.append(" OR ".join(temp_conditions))
+    if molgcmin != "":
+        temp_conditions = []
+        for part in molgcmin.split(','):
+            part = part.strip()
+            if part.replace(".","").isdigit():
+                temp_conditions.append("features.molGC_perc > %s")
+                parameters.append('%' + part + '%')
+        conditions.append(" OR ".join(temp_conditions))
+    if order != "":
+        temp_conditions = []
+        for part in order.split(','):
+            part = part.strip()
+            temp_conditions.append("taxonomy.Orders LIKE %s")
+            parameters.append('%' + part + '%')
+        conditions.append(" OR ".join(temp_conditions))
+    if family != "":
+        temp_conditions = []
+        for part in family.split(','):
+            part = part.strip()
+            temp_conditions.append("taxonomy.Family LIKE %s")
+            parameters.append('%' + part + '%')
+        conditions.append(" OR ".join(temp_conditions))
+    if genus != "":
+        temp_conditions = []
+        for part in genus.split(','):
+            part = part.strip()
+            temp_conditions.append("taxonomy.Genus LIKE %s")
+            parameters.append('%' + part + '%')
+        conditions.append(" OR ".join(temp_conditions))
+    if host != "":
+        temp_conditions = []
+        for part in host.split(','):
+            part = part.strip()
+            temp_conditions.append("host.Host LIKE %s")
+            parameters.append('%' + part + '%')
         conditions.append(" OR ".join(temp_conditions))
 
     if conditions:
@@ -621,7 +680,11 @@ def advanced_search_post():
     session['advanced_command'] = query
     session['advanced_parameters'] = parameters
 
-    return render_template('index.html')
+    cur.execute(query, parameters)
+    genomes = cur.fetchall()
+    cur.close()
+
+    return render_template('advanced_search_table.html', genomes=genomes)
 
 @app.route('/advanced_search_result', methods=['GET','POST'])
 def advanced_search_result():
@@ -710,11 +773,11 @@ def advanced_search_table():
         if conditions:
             query += " WHERE " + " AND ".join(conditions)
 
-    #if session.get('advanced_command'):
-    #    query = session['advanced_command']
+    if session.get('advanced_command'):
+        query = session['advanced_command']
 
-    #if session.get('advanced_parameters'):
-    #    parameters = session['advanced_parameters']
+    if session.get('advanced_parameters'):
+        parameters = session['advanced_parameters']
 
     
     cur.execute(query, parameters)

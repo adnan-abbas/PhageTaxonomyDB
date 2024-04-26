@@ -28,16 +28,44 @@
                     <input type="text" name="species" class="form-control" id="species" value="">
                 </div>
                 <div class="form-group">
-                    <label for="genome-length">Genome Length</label>
+                    <label for="genome-length">Genome Length (greater than amount imput)</label>
                     <input type="text" name="genome_length" class="form-control" id="genome-length" value="">
                 </div>
                 <div class="form-group">
                     <label for="sequence">Sequence</label>
                     <textarea name="sequence" class="form-control" id="sequence" value=""></textarea>
                 </div>
+                <div class="form-group">
+                    <label for="classification">Classification</label>
+                    <input type="text" name="classification" class="form-control" id="classification" value=""></input>
+                </div>
+                <div class="form-group">
+                    <label for="molgcmax">MolGC Percent Max</label>
+                    <input type="text" name="molgcmax" class="form-control" id="molgcmax" value=""></input>
+                </div>
+                <div class="form-group">
+                    <label for="molgcmin">MolGC Percent Min</label>
+                    <input type="text" name="molgcmin" class="form-control" id="molgcmin" value=""></input>
+                </div>
+                <div class="form-group">
+                    <label for="order">Order</label>
+                    <input type="text" name="order" class="form-control" id="order" value=""></input>
+                </div>
+                <div class="form-group">
+                    <label for="family">Family</label>
+                    <input type="text" name="family" class="form-control" id="family" value=""></input>
+                </div>
+                <div class="form-group">
+                    <label for="genus">Genus</label>
+                    <input type="text" name="genus" class="form-control" id="genus" value=""></input>
+                </div>
+                <div class="form-group">
+                    <label for="host">Host</label>
+                    <input type="text" name="host" class="form-control" id="host" value=""></input>
+                </div>
                 <br>
                 </br>
-                <button type="submit" class="btn btn-primary">Search</button>
+                <button type="submit" class="btn btn-primary">Submit</button>
                 <button type="button" id = "btn2" class="btn btn-primary">Clear All Filters</button>
         </div>
     </main>
@@ -58,15 +86,21 @@
                     'accession_id': $('#accession-id').val(),
                     'species': $('#species').val(),
                     'genome_length': $('#genome-length').val(),
-                    'sequence': $('#sequence').val()
-
+                    'sequence': $('#sequence').val(),
+                    'classification': $('#classification').val(),
+                    'molgcmax': $('#molgcmax').val(),
+                    'molgcmin': $('#molgcmin').val(),
+                    'order': $('#order').val(),
+                    'family': $('#family').val(),
+                    'genus': $('#genus').val(),
+                    'host': $('#host').val()
                 };
                 $.ajax({
                 type: "POST",
                 url: "/advanced_search_post",
                 data: formData,
                 success: function (data) {
-                    window.location.href = '/index';
+                    window.location.href = '/advanced_search_table';
                     //provide a scrollable modal here to verify if this is what the user wants to add
 
                 }
