@@ -23,11 +23,10 @@
         <thead>
             <tr>
                 <th><input type="checkbox" id="selectAll"></th> <!-- Master checkbox -->
-                <th>Accession ID</th>
-                <th>Species</th>
-                <th>Genome Length</th>
-                <th>Modification Date</th>
-                <!-- <th>Fasta</th> -->
+                <th data-type="string">Accession ID</th>
+                <th data-type="string">Species</th>
+                <th data-type="number">Genome Length</th>
+                <th data-type="date">Modification Date</th>
             </tr>
         </thead>
         <tbody>
@@ -41,46 +40,72 @@
             </tr>
             {% endfor %}
         </tbody>
-        
     </table>
 
-<!-- Begin Combined Pagination, Page Number, and Download Button Container -->
-<div class="d-flex justify-content-between align-items-center mt-3">
-    <!-- Pagination Controls -->
-    <nav aria-label="Table navigation">
-        <ul class="pagination mb-0"> <!-- Ensure mb-0 to avoid extra margin -->
-            <li class="page-item"><a class="page-link" href="#" id="firstPage">First</a></li>
-            <li class="page-item"><a class="page-link" href="#" id="prevPage">Previous</a></li>
-            <!-- Pagination buttons will be dynamically inserted here -->
-            <li class="page-item"><a class="page-link" href="#" id="nextPage">Next</a></li>
-            <li class="page-item"><a class="page-link" href="#" id="lastPage">Last</a></li>
-        </ul>
-    </nav>
-    
-    <!-- Page Number Information -->
-    <span id="pageNumberInfo">Page 1 of X</span> <!-- Adjusted for inline display -->
+    <!-- Begin Combined Pagination, Page Number, and Download Button Container -->
+    <div class="d-flex justify-content-between align-items-center mt-3">
+        <!-- Pagination Controls -->
+        <nav aria-label="Table navigation">
+            <ul class="pagination mb-0">
+                <li class="page-item"><a class="page-link" href="#" id="firstPage">First</a></li>
+                <li class="page-item"><a class="page-link" href="#" id="prevPage">Previous</a></li>
+                <!-- Pagination buttons will be dynamically inserted here -->
+                <li class="page-item"><a class="page-link" href="#" id="nextPage">Next</a></li>
+                <li class="page-item"><a class="page-link" href="#" id="lastPage">Last</a></li>
+            </ul>
+        </nav>
+        
+        <!-- Page Number Information -->
+        <span id="pageNumberInfo">Page 1 of X</span>
 
-    <!-- Download Selected FASTA Button -->
-    <button id="downloadSelected" class="btn btn-success">Download FASTA</button>
-</div>
-<!-- End Combined Pagination, Page Number, and Download Button Container -->
-
-
-
-
-
-
-
+        <!-- Download Selected FASTA Button -->
+        <button id="downloadSelected" class="btn btn-success">Download FASTA</button>
+    </div>
+    <!-- End Combined Pagination, Page Number, and Download Button Container -->
 </main>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-   $(document).ready(function(){
+$(document).ready(function(){
     let current_page = 1;
     let rows_per_table = parseInt($("#rowsPerTable").val());
+    let data = $("#genomesTable tbody tr").toArray();
 
-    // Update the pagination and page numbers
+    // Sorting function
+    function sortTableByColumn(columnIndex, type, ascending) {
+        data.sort(function(a, b) {
+            var A = $(a).children('td').eq(columnIndex).text().trim();
+            var B = $(b).children('td').eq(columnIndex).text().trim();
+
+            if (type === 'number') {
+                A = parseFloat(A);
+                B = parseFloat(B);
+            } else if (type === 'date') {
+                A = new Date(A);
+                B = new Date(B);
+            }
+
+            if (A < B) return ascending ? -1 : 1;
+            if (A > B) return ascending ? 1 : -1;
+            return 0;
+        });
+    }
+
+    // Event listener for table headers
+    $("#genomesTable thead th").click(function() {
+        if ($(this).data('type')) {
+            var columnIndex = $(this).index();
+            var type = $(this).data('type');
+            var ascending = $(this).hasClass('asc');
+            sortTableByColumn(columnIndex, type, !ascending);
+            $(this).toggleClass('asc', !ascending).toggleClass('desc', ascending);
+            current_page = 1;  // Reset to first page after sorting
+            updateDisplay();
+        }
+    });
+
     function updatePaginationAndPageNumbers() {
-        const totalItems = $("#genomesTable tbody tr").length;
+        const totalItems = data.length;
         const totalPages = Math.ceil(totalItems / rows_per_table);
         $("#pageNumberInfo").text(`Page ${current_page} of ${totalPages}`);
 
@@ -93,7 +118,7 @@
     function showRowsForPage(page) {
         const start_index = (page - 1) * rows_per_table;
         const end_index = start_index + rows_per_table;
-        $("#genomesTable tbody tr").hide().slice(start_index, end_index).show();
+        $("#genomesTable tbody").empty().append(data.slice(start_index, end_index));
     }
 
     function updateDisplay() {
@@ -111,7 +136,7 @@
 
     $("#lastPage").click(function(e) {
         e.preventDefault();
-        const totalItems = $("#genomesTable tbody tr").length;
+        const totalItems = data.length;
         const totalPages = Math.ceil(totalItems / rows_per_table);
         if (current_page < totalPages) {
             current_page = totalPages;
@@ -129,7 +154,7 @@
 
     $("#nextPage").click(function(e) {
         e.preventDefault();
-        const totalItems = $("#genomesTable tbody tr").length;
+        const totalItems = data.length;
         const totalPages = Math.ceil(totalItems / rows_per_table);
         if (current_page < totalPages) {
             current_page++;
@@ -146,73 +171,59 @@
     updateDisplay();
 });
 
-    </script>
-    
+document.addEventListener('DOMContentLoaded', function () {
+    const selectAllCheckbox = document.getElementById('selectAll');
+    const rowCheckboxes = document.querySelectorAll('.rowCheckbox');
 
-<!-- selection checkbox script-->
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const selectAllCheckbox = document.getElementById('selectAll');
-        const rowCheckboxes = document.querySelectorAll('.rowCheckbox');
-
-        // When the master checkbox changes state, update all row checkboxes
-        selectAllCheckbox.addEventListener('change', function() {
-            rowCheckboxes.forEach(checkbox => {
-                checkbox.checked = this.checked;
-            });
-        });
-
-        // Update the master checkbox state based on the individual selections of row checkboxes
+    // When the master checkbox changes state, update all row checkboxes
+    selectAllCheckbox.addEventListener('change', function() {
         rowCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                selectAllCheckbox.checked = rowCheckboxes.length === document.querySelectorAll('.rowCheckbox:checked').length;
-            });
+            checkbox.checked = this.checked;
         });
     });
+
+    // Update the master checkbox state based on the individual selections of row checkboxes
+    rowCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            selectAllCheckbox.checked = rowCheckboxes.length === document.querySelectorAll('.rowCheckbox:checked').length;
+        });
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const downloadBtn = document.getElementById('downloadSelected');
+
+    downloadBtn.addEventListener('click', function() {
+        const selectedIds = Array.from(document.querySelectorAll('.rowCheckbox:checked')).map(checkbox => {
+            return checkbox.closest('tr').querySelector('td:nth-child(2)').textContent.trim(); // Accession ID is in the 2nd column
+        });
+
+        if (selectedIds.length > 0) {
+            fetch('/download_fasta', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ selectedIds }),
+            })
+            .then(response => {
+                if(response.ok) return response.blob();
+                throw new Error('Failed to download file.');
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = "fasta_files.zip";
+                document.body.appendChild(a);
+                a.click();    
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => console.error('Error:', error));
+        } else {
+            alert('Please select at least one genome.');
+        }
+    });
+});
 </script>
-
-<!-- Download fasta files -->
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const downloadBtn = document.getElementById('downloadSelected');
-    
-        downloadBtn.addEventListener('click', function() {
-            const selectedIds = Array.from(document.querySelectorAll('.rowCheckbox:checked')).map(checkbox => {
-                return checkbox.closest('tr').querySelector('td:nth-child(2)').textContent.trim(); // Accession ID is in the 2nd column
-            });
-    
-            if (selectedIds.length > 0) {
-                fetch('/download_fasta', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ selectedIds }),
-                })
-                .then(response => {
-                    if(response.ok) return response.blob();
-                    throw new Error('Failed to download file.');
-                })
-                .then(blob => {
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = "fasta_files.zip"; 
-                    document.body.appendChild(a);
-                    a.click();    
-                    window.URL.revokeObjectURL(url);
-                })
-                .catch(error => console.error('Error:', error));
-            } else {
-                alert('Please select at least one genome.');
-            }
-        });
-    });
-    </script>
-    
-    
-
-
 {% endblock %}
-
-        
