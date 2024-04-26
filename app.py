@@ -628,17 +628,17 @@ def advanced_search_post():
         temp_conditions = []
         for part in molgcmax.split(','):
             part = part.strip()
-            #if part.replace(".","").isdigit():
-            temp_conditions.append("features.molGC_perc < %s")
-            parameters.append('%' + part + '%')
+            if part.replace(".","").isdigit():
+                temp_conditions.append("features.molGC_perc < %s")
+                parameters.append('%' + part + '%')
         conditions.append(" OR ".join(temp_conditions))
     if molgcmin != "":
         temp_conditions = []
         for part in molgcmin.split(','):
             part = part.strip()
-            #if part.replace(".","").isdigit():
-            temp_conditions.append("features.molGC_perc > %s")
-            parameters.append('%' + part + '%')
+            if part.replace(".","").isdigit():
+                temp_conditions.append("features.molGC_perc > %s")
+                parameters.append('%' + part + '%')
         conditions.append(" OR ".join(temp_conditions))
     if order != "":
         temp_conditions = []
