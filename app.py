@@ -733,7 +733,7 @@ def advanced_search_clear():
     if session.get('advanced_parameters'):
         session.pop('advanced_parameters')
 
-    return render_template('index.html')
+    return render_template('advanced_search_table.html')
 
 @app.route('/advanced_search_table', methods=['GET', 'POST'])
 def advanced_search_table():
