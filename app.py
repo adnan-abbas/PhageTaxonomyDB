@@ -631,7 +631,6 @@ def advanced_search_post():
         for part in genome_length.split(','):
             part = part.strip()
             if part.isdigit():
-                print("PARTTTT",part)
                 temp_conditions.append("genome.Genome_Length > %s")
                 parameters.append( part )
         conditions.append(" OR ".join(temp_conditions))
