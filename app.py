@@ -615,6 +615,7 @@ def advanced_search_post():
             part = part.strip()
             if part.isdigit():
                 temp_conditions.append("genome.Genome_Length > %s")
+                temp_conditions.append("Genome_Length > %s")
                 parameters.append('%' + part + '%')
         conditions.append(" OR ".join(temp_conditions))
     if classification != "":

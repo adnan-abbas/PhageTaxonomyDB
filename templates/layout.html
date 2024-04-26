@@ -184,6 +184,18 @@ main {
                             </a>
                         </li>
                     </ul>
+
+                    <ul class="nav flex-column mb-2 fs-3">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('advanced_search') }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                                    <path fill="white" d="M0 0h24v24H0V0z"/>
+                                    <path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 0 0 1.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 0 0-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 0 0 5.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                                </svg>
+                                Advanced Search
+                            </a>
+                        </li>
+                    </ul>
                     {% endif %}
 
                     {% if session['role'] == 'admin' %}
@@ -192,7 +204,7 @@ main {
                             <a class="nav-link" href="{{ url_for('admin_settings') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-settings">
                                     <circle cx="12" cy="12" r="3"></circle>
-                                    <path d="M19.4 15a9 9 0 0 1-2.34 2.34l-1.29-2.23a3 3 0 0 0-2.58-1.44h-3.37a3 3 0 0 0-2.58 1.44L6.94 17.4A9 9 0 0 1 4 15V10a9 9 0 0 1 2.34-2.34l1.29 2.23a3 3 0 0 0 2.58 1.44h3.37a3 3 0 0 0 2.58-1.44l1.29-2.23A9 9 0 0 1 20 10z" fill="none"></path>
+                                    <path d="M19.4 15a9 9 0 0 1-2.34 2.34l-1.29-2.23a3 3 0 0 0-2.58-1.44h-3.37a3 3 0 0 0-2.58 1.44L6.94 17.4A9 9 0 0 1 4 15V10a9 9 0 0 1 2.34-2.34l1.29 2.23a3 3 0 0 0 2.58 1.44h3.37a3 3 0 0 0 2.58-1.44l1.29-2.23A9 9 0 0 1 20 10z" ></path>
                                 </svg>
                                 
                                 Settings
