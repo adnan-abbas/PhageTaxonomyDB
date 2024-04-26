@@ -72,6 +72,52 @@
             </div>
         </div>
 
+        <!-- Taxonnomy section -->
+        <div class="card-body">
+            <h3>Taxonomy</h3>
+            <div class="table-responsive">
+                <table class="table feature-table">
+                    <thead>
+                        <tr>
+                            <th>Order</th>
+                            <th>Family</th>
+                            <th>Genus</th>
+                            <th>Species</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for taxa in taxonomy %}
+                        <tr>
+                            <td>{{ taxa.orders }}</td>
+                            <td>{{ taxa.family }}</td>
+                            <td>{{ taxa.genus }}</td>
+                            <td>{{ taxa.species }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Bacterial host section -->
+        <div class="card-body">
+            <h3>Bacterial Host</h3>
+            <div class="table-responsive">
+                <table class="table feature-table">
+                    <thead>
+                        <tr>
+                            <th>Host</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for bact in bacts %}
+                        <tr>
+                            <td>{{ bact.Host }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
         <!-- Action Buttons -->
         <div class="card-footer text-right">
             <a href="/path/to/download/{{ details.accession_id }}.fasta" class="btn btn-primary">

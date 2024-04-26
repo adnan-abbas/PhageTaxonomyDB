@@ -457,6 +457,17 @@ def show_summary(accessionID):
     # Fetch features data
     cur.execute("SELECT * FROM features WHERE Accession = %s", [accessionID])
     features_data = cur.fetchall()
+
+    # Fetch taxonomy data
+    cur.execute("SELECT * FROM taxonomy WHERE Species = %s", [genome_data[1]])
+    taxonomy_data = cur.fetchall()
+
+    # Fetch host data
+    cur.execute("SELECT * FROM species_attacks WHERE Species = %s", [genome_data[1]])
+    host_data = cur.fetchone()
+
+    cur.execute("SELECT * FROM host WHERE BactID = %s", [host_data[1]])
+    bact_data = cur.fetchall()
     cur.close()
 
     # Preparing data for the template
@@ -479,10 +490,23 @@ def show_summary(accessionID):
             'negative_strand': feature[5],
             'trnas': feature[6]
         })
-    print("Genome Details:", genome_details)
-    print("Features:", features)
+    # print("Genome Details:", genome_details)
+    # print("Features:", features)
+    taxonomy = []
+    for taxa in taxonomy_data:
+        taxonomy.append({
+            'species': taxa[0],
+            'orders': taxa[1],
+            'family': taxa[2],
+            'genus': taxa[3]
+        })
 
-    return render_template('summary_page.html', details=genome_details, features=features)
+        bacts = []
+    for bact in bact_data:
+        bacts.append({
+            'Host': bact[0]
+        })
+    return render_template('summary_page.html', details=genome_details, features=features, taxonomy=taxonomy, bacts=bacts)
 
 @app.route('/data_statistics')
 def data_statistics():
